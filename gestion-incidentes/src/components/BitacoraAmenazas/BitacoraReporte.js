@@ -10,11 +10,7 @@ const BitacoraReporte = () => {
     const [message, setMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
-    const meses = [
-        'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
-    ];
-    
+    const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
     const threatTypes = ['malware', 'phishing', 'comando_y_control', 'criptomineria', 'denegacion_de_servicios', 'intentos_de_conexion'];
     const threatLabels = ['Malware', 'Phishing', 'Comando y Control', 'Criptominería', 'Denegación de Servicios', 'Intentos de Conexión'];
 
@@ -67,307 +63,100 @@ const BitacoraReporte = () => {
         }
     };
 
-    const getChartData = () => {
-        const labels = Object.keys(monthlyTotals);
-        const dataSets = threatTypes.map((type, index) => {
-            const dataValues = labels.map(mes => monthlyTotals[mes][type] || 0);
-            return {
-                label: threatLabels[index],
-                data: dataValues,
-                color: `hsl(${(index * 60) % 360}, 70%, 50%)`
-            };
-        });
-        return { labels, dataSets };
-    };
-
-    const { labels } = getChartData();
+    const labels = Object.keys(monthlyTotals);
     const maxTotal = labels.length > 0 ? Math.max(...labels.map(mes => threatTypes.reduce((sum, type) => sum + monthlyTotals[mes][type], 0))) : 0;
     
     return (
-        <div className="reporte-container">
-            <style>{`
-                .reporte-container {
-                    padding: 2rem;
-                    max-width: 900px;
-                    margin: 0 auto;
-                    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-                    background-color: #f4f7f9;
-                    border-radius: 8px;
-                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                    color: #2c3e50;
-                }
+        <div className="bg-gray-100 p-4 sm:p-6 lg:p-8 min-h-screen">
+            <div className="max-w-6xl mx-auto">
+                <h2 className="text-3xl font-bold text-gray-800 text-center mb-6">Generar Reporte de Amenazas</h2>
                 
-                .reporte-container h2 {
-                    text-align: center;
-                    color: #2c3e50;
-                    margin-bottom: 2rem;
-                }
-                
-                .form-group {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 1rem;
-                    margin-bottom: 1.5rem;
-                }
-                
-                .form-group label {
-                    font-weight: bold;
-                    color: #34495e;
-                }
-                
-                .form-group select,
-                .form-group input[type="number"] {
-                    width: 100%;
-                    padding: 0.75rem;
-                    border-radius: 4px;
-                    border: 1px solid #bdc3c7;
-                    transition: border-color 0.3s;
-                    box-sizing: border-box;
-                }
-                
-                .form-group select:focus,
-                .form-group input[type="number"]:focus {
-                    outline: none;
-                    border-color: #3498db;
-                }
-                
-                .buttons-container {
-                    display: flex;
-                    gap: 1rem;
-                    justify-content: center;
-                    margin-bottom: 1.5rem;
-                }
-
-                .action-button {
-                    padding: 0.75rem 1.5rem;
-                    border: none;
-                    border-radius: 50px;
-                    cursor: pointer;
-                    font-weight: bold;
-                    transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
-                    color: white;
-                    background-color: #3498db;
-                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-                }
-                
-                .action-button:hover:not(:disabled) {
-                    background-color: #2980b9;
-                    transform: translateY(-2px);
-                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-                }
-                
-                .action-button:disabled {
-                    background-color: #b0c4de;
-                    cursor: not-allowed;
-                }
-
-                .message {
-                    text-align: center;
-                    color: #e74c3c;
-                    margin-bottom: 1rem;
-                    font-weight: bold;
-                }
-                
-                .reporte-preview table, .summary-table {
-                    width: 100%;
-                    border-collapse: collapse;
-                    margin-top: 1.5rem;
-                    background-color: white;
-                    border-radius: 8px;
-                    overflow: hidden;
-                    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-                }
-                
-                .reporte-preview th,
-                .reporte-preview td,
-                .summary-table th,
-                .summary-table td {
-                    padding: 0.75rem;
-                    border: 1px solid #ecf0f1;
-                    text-align: left;
-                }
-                
-                .reporte-preview th,
-                .summary-table th {
-                    background-color: #34495e;
-                    color: white;
-                    font-weight: bold;
-                    text-transform: uppercase;
-                }
-                
-                .reporte-preview tr:nth-child(even),
-                .summary-table tr:nth-child(even) {
-                    background-color: #f8f9fa;
-                }
-
-                .chart-container {
-                    margin-top: 3rem;
-                    padding: 1.5rem;
-                    background-color: white;
-                    border-radius: 8px;
-                    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-                    text-align: center;
-                }
-                
-                .chart {
-                    display: flex;
-                    align-items: flex-end;
-                    justify-content: space-around;
-                    height: 250px;
-                    padding-top: 10px;
-                    border-left: 2px solid #34495e;
-                    border-bottom: 2px solid #34495e;
-                    position: relative;
-                }
-                .chart:after {
-                    content: '';
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    bottom: 0;
-                    right: 0;
-                    background: linear-gradient(to top, rgba(0,0,0,0.05) 1px, transparent 1px);
-                    background-size: 100% 25px; /* Adjust grid lines spacing */
-                }
-
-                .bar-group {
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    flex: 1;
-                    margin: 0 5px;
-                    position: relative;
-                }
-
-                .bar {
-                    width: 80%;
-                    background-color: #3498db;
-                    border-top-left-radius: 5px;
-                    border-top-right-radius: 5px;
-                    transition: height 0.5s ease-in-out;
-                    position: relative;
-                }
-                .bar-label {
-                    position: absolute;
-                    top: -20px;
-                    font-size: 0.75rem;
-                    font-weight: bold;
-                    color: #555;
-                }
-
-                .bar-label-hidden {
-                    display: none;
-                }
-
-                .bar-group-label {
-                    font-size: 0.75rem;
-                    text-align: center;
-                    margin-top: 5px;
-                    white-space: nowrap;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    max-width: 100%;
-                }
-                
-                @media (max-width: 768px) {
-                    .form-group {
-                        flex-direction: column;
-                    }
-                    .bar-group-label {
-                        font-size: 0.65rem;
-                        transform: rotate(-45deg);
-                        transform-origin: 0% 0%;
-                        margin-top: 15px;
-                    }
-                    .reporte-container {
-                        padding: 1rem;
-                    }
-                }
-            `}</style>
-            <h2>Generar Reporte de Amenazas</h2>
-            <div className="form-group">
-                <label>Mes de Inicio:</label>
-                <select value={mesInicio} onChange={(e) => setMesInicio(e.target.value)}>
-                    <option value="">Selecciona un mes</option>
-                    {meses.map(mes => <option key={mes} value={mes}>{mes}</option>)}
-                </select>
-                <label>Mes de Fin:</label>
-                <select value={mesFin} onChange={(e) => setMesFin(e.target.value)}>
-                    <option value="">Selecciona un mes</option>
-                    {meses.map(mes => <option key={mes} value={mes}>{mes}</option>)}
-                </select>
-                <label>Año:</label>
-                <input type="number" value={year} onChange={(e) => setYear(e.target.value)} min="2000" max="2100" />
-            </div>
-            <div className="buttons-container">
-                <button className="action-button" onClick={fetchReportData} disabled={isLoading}>
-                    {isLoading ? (
-                        <svg className="animate-spin" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 4.75V6.25" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                            <path d="M17.1266 6.87343L16.0659 7.93414" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                            <path d="M19.25 12L17.75 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                            <path d="M17.1266 17.1266L16.0659 16.0659" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                            <path d="M12 17.75V19.25" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                            <path d="M7.93414 16.0659L6.87343 17.1266" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                            <path d="M6.25 12L4.75 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                            <path d="M7.93414 7.93414L6.87343 6.87343" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                    ) : 'Mostrar Reporte'}
-                </button>
-            </div>
-
-            {message && <p className="message">{message}</p>}
-            
-            {Object.keys(monthlyTotals).length > 0 && (
-                <div className="reporte-preview">
-                    <h3>Totales Mensuales de Amenazas</h3>           
-                    <div className="chart-container">
-                        <h4>Gráfica de Amenazas</h4>
-                        <div className="chart-wrapper" style={{ overflowX: 'auto' }}>
-                             <div className="chart" style={{ width: Math.max(800, labels.length * 100) }}>
-                                 {labels.map(mes => {
-                                     const totalMes = threatTypes.reduce((sum, type) => sum + (monthlyTotals[mes][type] || 0), 0);
-                                     const heightPercentage = maxTotal > 0 ? (totalMes / maxTotal) * 100 : 0;
-                                     return (
-                                         <div key={mes} className="bar-group">
-                                             <div
-                                                 className="bar"
-                                                 style={{ height: `${heightPercentage}%`, backgroundColor: '#3498db' }}
-                                             >
-                                             </div>
-                                             <span className="bar-label" style={{ display: heightPercentage < 10 ? 'none' : 'block' }}>{totalMes}</span>
-                                             <span className="bar-group-label">{mes}</span>
-                                         </div>
-                                     );
-                                 })}
-                             </div>
+                <div className="bg-white p-6 rounded-xl shadow-md mb-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700">Mes de Inicio:</label>
+                            <select value={mesInicio} onChange={(e) => setMesInicio(e.target.value)} className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                                <option value="">Selecciona un mes</option>
+                                {meses.map(mes => <option key={mes} value={mes}>{mes}</option>)}
+                            </select>
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700">Mes de Fin:</label>
+                            <select value={mesFin} onChange={(e) => setMesFin(e.target.value)} className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                                <option value="">Selecciona un mes</option>
+                                {meses.map(mes => <option key={mes} value={mes}>{mes}</option>)}
+                            </select>
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700">Año:</label>
+                            <input type="number" value={year} onChange={(e) => setYear(e.target.value)} min="2000" max="2100" className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"/>
                         </div>
                     </div>
-                    
-
-                    <h4 style={{ marginTop: '2rem' }}>Resumen de Amenazas por Mes</h4>
-                    <table className="summary-table">
-                        <thead>
-                            <tr>
-                                <th>Mes</th>
-                                {threatLabels.map(label => <th key={label}>{label}</th>)}
-                                <th>Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {labels.map(mes => (
-                                <tr key={mes}>
-                                    <td>{mes}</td>
-                                    {threatTypes.map(type => (
-                                        <td key={type}>{monthlyTotals[mes][type] || 0}</td>
-                                    ))}
-                                    <td>{threatTypes.reduce((sum, type) => sum + (monthlyTotals[mes][type] || 0), 0)}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                    <div className="text-center mt-4">
+                        <button className="px-6 py-2 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-300" onClick={fetchReportData} disabled={isLoading}>
+                            {isLoading ? 'Generando...' : 'Mostrar Reporte'}
+                        </button>
+                    </div>
                 </div>
-            )}
+
+                {message && <p className="text-center text-red-600 font-semibold my-4">{message}</p>}
+                
+                {labels.length > 0 && (
+                    <div className="bg-white p-6 rounded-xl shadow-md">
+                        <h3 className="text-2xl font-bold text-gray-800 mb-4">Totales Mensuales de Amenazas</h3>
+                        
+                        {/* Gráfico de Barras */}
+                        <div className="mb-8 p-4 border rounded-lg">
+                            <h4 className="text-xl font-semibold text-gray-700 text-center mb-4">Gráfica de Amenazas</h4>
+                            <div className="w-full overflow-x-auto">
+                                <div className="chart-container flex items-end h-64 space-x-4 pl-4 border-l-2 border-b-2 border-gray-300" style={{ minWidth: `${labels.length * 6}rem` }}>
+                                    {labels.map(mes => {
+                                        const totalMes = threatTypes.reduce((sum, type) => sum + (monthlyTotals[mes][type] || 0), 0);
+                                        const heightPercentage = maxTotal > 0 ? (totalMes / maxTotal) * 100 : 0;
+                                        return (
+                                            <div key={mes} className="bar-group flex-1 flex flex-col items-center">
+                                                <div className="relative w-full h-full flex items-end">
+                                                    <div className="w-full bg-indigo-500 rounded-t-md hover:bg-indigo-700 transition-colors" style={{ height: `${heightPercentage}%` }}>
+                                                        <span className="absolute -top-6 left-1/2 -translate-x-1/2 text-sm font-semibold text-gray-700">{totalMes > 0 ? totalMes : ''}</span>
+                                                    </div>
+                                                </div>
+                                                <span className="text-xs font-medium text-gray-600 mt-2 text-center">{mes}</span>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Tabla de Resumen */}
+                        <div>
+                            <h4 className="text-xl font-semibold text-gray-700 mb-4">Resumen Detallado</h4>
+                            <div className="overflow-x-auto rounded-lg border">
+                                <table className="min-w-full divide-y divide-gray-200">
+                                    <thead className="bg-gray-50">
+                                        <tr>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mes</th>
+                                            {threatLabels.map(label => <th key={label} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{label}</th>)}
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="bg-white divide-y divide-gray-200">
+                                        {labels.map(mes => (
+                                            <tr key={mes} className="hover:bg-gray-50">
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{mes}</td>
+                                                {threatTypes.map(type => (
+                                                    <td key={type} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{monthlyTotals[mes][type] || 0}</td>
+                                                ))}
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{threatTypes.reduce((sum, type) => sum + (monthlyTotals[mes][type] || 0), 0)}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
         </div>
     );
 };

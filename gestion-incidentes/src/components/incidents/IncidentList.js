@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import '../IncidentCss/IncidentList.css';
 
 const IncidentList = () => {
     const [incidents, setIncidents] = useState([]);
@@ -30,7 +29,7 @@ const IncidentList = () => {
     const onIncidentDeleted = async (id) => {
         setError(null);
         try {
-            await axios.delete(`https://localhost/gestion-incidentes/backend/incidentes.php?id=${id}`);
+            await axios.delete(`https://192.168.39.115/gestion-incidentes/backend/incidentes.php?id=${id}`);
             fetchIncidents();
         } catch (err) {
             console.error("Error al eliminar el incidente:", err);
@@ -43,57 +42,57 @@ const IncidentList = () => {
     };
 
     if (loading) {
-        return <p>Cargando incidentes...</p>;
+        return <p className="text-center text-gray-500">Cargando incidentes...</p>;
     }
 
     if (error) {
-        return <div className="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg" role="alert">{error}</div>;
+        return <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">{error}</div>;
     }
 
     return (
-        <div className="incident-list bitacora-content-box">
-            <h2 className="bitacora-section-heading">Incidentes Registrados</h2>
-            <div className="table-container">
-                <table>
-                    <thead>
+        <div className="container mx-auto p-4">
+            <h2 className="text-2xl font-bold mb-4 text-gray-800">Incidentes Registrados</h2>
+            <div className="shadow-lg rounded-lg overflow-x-auto">
+                <table className="w-full table-auto">
+                    <thead className="bg-gray-200">
                         <tr>
-                            <th>ID</th>
-                            <th>Tipo de Incidente</th>
-                            <th>Prioridad</th>
-                            <th>Fecha</th>
-                            <th>Responsable</th>
-                            <th>Equipo Afectado</th>
-                            <th>Dirección MAC</th>
-                            <th>Dependencia</th>
-                            <th>Detecciones</th>
-                            <th>Estado</th>
-                            <th>Acciones Tomadas</th>
-                            <th>Hash/URL/Archivo</th>
-                            <th>Nivel de Amenaza</th>
-                            <th>Detalles</th>
-                            <th>Acciones</th>
+                            <th className="px-4 py-2 text-left">ID</th>
+                            <th className="px-4 py-2 text-left">Tipo</th>
+                            <th className="px-4 py-2 text-left">Prioridad</th>
+                            <th className="px-4 py-2 text-left">Fecha</th>
+                            <th className="px-4 py-2 text-left">Responsable</th>
+                            <th className="px-4 py-2 text-left">Equipo Afectado</th>
+                            <th className="px-4 py-2 text-left">MAC</th>
+                            <th className="px-4 py-2 text-left">Dependencia</th>
+                            <th className="px-4 py-2 text-left">Detecciones</th>
+                            <th className="px-4 py-2 text-left">Estado</th>
+                            <th className="px-4 py-2 text-left">Acciones Tomadas</th>
+                            <th className="px-4 py-2 text-left">IOC</th>
+                            <th className="px-4 py-2 text-left">Nivel Amenaza</th>
+                            <th className="px-4 py-2 text-left">Detalles</th>
+                            <th className="px-4 py-2 text-left">Acciones</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody className="text-gray-700">
                         {incidents.map(inc => (
-                            <tr key={inc.id}>
-                                <td>{inc.id}</td>
-                                <td>{inc.tipo_incidente}</td>
-                                <td>{inc.prioridad}</td>
-                                <td>{inc.fecha_incidente}</td>
-                                <td>{inc.responsable}</td>
-                                <td>{inc.equipo_afectado}</td>
-                                <td>{inc.direccion_mac}</td>
-                                <td>{inc.dependencia}</td>
-                                <td>{inc.cantidad_detecciones}</td>
-                                <td>{inc.estado_equipo}</td>
-                                <td>{inc.acciones_tomadas}</td>
-                                <td>{inc.hash_url}</td>
-                                <td>{inc.nivel_amenaza}</td>
-                                <td>{inc.detalles}</td>
-                                <td>
-                                    <button onClick={() => onIncidentEdit(inc)} className="edit-btn">Editar</button>
-                                    <button onClick={() => onIncidentDeleted(inc.id)} className="delete-btn">Eliminar</button>
+                            <tr key={inc.id} className="border-b hover:bg-gray-100">
+                                <td className="px-4 py-2">{inc.id}</td>
+                                <td className="px-4 py-2">{inc.tipo_incidente}</td>
+                                <td className="px-4 py-2">{inc.prioridad}</td>
+                                <td className="px-4 py-2">{inc.fecha_incidente}</td>
+                                <td className="px-4 py-2">{inc.responsable}</td>
+                                <td className="px-4 py-2">{inc.equipo_afectado}</td>
+                                <td className="px-4 py-2">{inc.direccion_mac}</td>
+                                <td className="px-4 py-2">{inc.dependencia}</td>
+                                <td className="px-4 py-2">{inc.cantidad_detecciones}</td>
+                                <td className="px-4 py-2">{inc.estado_equipo}</td>
+                                <td className="px-4 py-2">{inc.acciones_tomadas}</td>
+                                <td className="px-4 py-2">{inc.hash_url}</td>
+                                <td className="px-4 py-2">{inc.nivel_amenaza}</td>
+                                <td className="px-4 py-2">{inc.detalles}</td>
+                                <td className="px-4 py-2">
+                                    <button onClick={() => onIncidentEdit(inc)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded mr-2">Editar</button>
+                                    <button onClick={() => onIncidentDeleted(inc.id)} className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">Eliminar</button>
                                 </td>
                             </tr>
                         ))}
