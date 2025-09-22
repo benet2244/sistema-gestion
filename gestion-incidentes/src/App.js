@@ -10,7 +10,6 @@ import News from './components/news/news';
 import SavedNews from './components/news/SavedNews';
 import Bitacora from './components/BitacoraIncidentes/bitacora';
 import Inicio from './components/inicio/inicio';
-import './App.css';
 import BitacoraMensual from './components/BitacoraAmenazas/BitacoraMensual';
 import BitacoraReporte from './components/BitacoraAmenazas/BitacoraReporte';
 import BitacoraGraficas from './components/BitacoraAmenazas/BitacoraGraficas';
