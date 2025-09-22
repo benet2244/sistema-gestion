@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './bitacoraAmenazas.css';
 
 const BitacoraMensual = () => {
     const [mes, setMes] = useState('');
