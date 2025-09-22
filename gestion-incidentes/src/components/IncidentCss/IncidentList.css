@@ -1,0 +1,162 @@
+/*
+ * Contenedor principal de la lista de incidentes.
+ * Aplica estilos de tarjeta para un diseño más moderno.
+ */
+.incident-list-container {
+    padding: 2rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    border-radius: 12px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+    margin-top: 2rem;
+}
+
+.bitacora-content-box {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.bitacora-section-heading {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 2rem;
+    border-bottom: 3px solid #3498db;
+    padding-bottom: 0.75rem;
+    text-align: center;
+}
+
+/*
+ * Estilos para la tabla en pantallas grandes (desktop).
+ */
+.incident-table-wrapper {
+    overflow-x: auto;
+}
+
+.incident-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1.5rem;
+}
+
+.incident-table th,
+.incident-table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #dee2e6;
+    white-space: nowrap;
+}
+
+.incident-table thead th {
+    background-color: #34495e;
+    color: #ecf0f1;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+.incident-table tbody tr {
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.incident-table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.incident-table tbody tr:hover {
+    background-color: #e9ecef;
+    transform: scale(1.01);
+}
+
+/*
+ * Estilos para los botones de acción.
+ */
+.action-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.action-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.edit-btn {
+    background-color: #3498db;
+    color: white;
+}
+
+.edit-btn:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+}
+
+.delete-btn {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.delete-btn:hover {
+    background-color: #c0392b;
+    transform: translateY(-2px);
+}
+
+/*
+ * Media query para dispositivos móviles.
+ * Transforma la tabla en un formato de lista de tarjetas.
+ */
+@media (max-width: 768px) {
+    .incident-table,
+    .incident-table thead,
+    .incident-table tbody,
+    .incident-table th,
+    .incident-table td,
+    .incident-table tr {
+        display: block;
+    }
+
+    .incident-table thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+
+    .incident-table tr {
+        border: 1px solid #ccc;
+        margin-bottom: 1rem;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .incident-table td {
+        border-bottom: 1px solid #eee;
+        position: relative;
+        padding-left: 50%;
+        text-align: right;
+    }
+
+    .incident-table td:last-child {
+        border-bottom: 0;
+    }
+
+    /* Crea las etiquetas para cada campo en móvil */
+    .incident-table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 10px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        text-align: left;
+        font-weight: bold;
+        color: #555;
+    }
+}

@@ -1,0 +1,213 @@
+/* Estilos para el contenedor principal y el título */
+.incidente-form.bitacora-content-box {
+    background-color: #f7f9fc;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    margin: 2rem auto;
+    width: 50%;
+    max-width: 100%;
+}
+
+.bitacora-section-heading {
+    text-align: center;
+    color: #333;
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+    border-bottom: 2px solid #ccc;
+    padding-bottom: 0.5rem;
+}
+
+/* Estilos de la cuadrícula del formulario */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #555;
+}
+
+.form-input,
+.form-group select {
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+}
+
+.form-input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+.form-textarea-full {
+    grid-column: 1 / -1;
+}
+
+/* Contenedor del input y botón de hash */
+.hash-input-container {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.hash-input-container .form-input {
+    flex-grow: 1;
+}
+
+/* Botón de análisis de hash */
+.bitacora-analyze-button {
+    background-color: #17a2b8;
+    color: white;
+    padding: 0.75rem 1.25rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.bitacora-analyze-button:hover {
+    background-color: #138496;
+    transform: translateY(-2px);
+}
+
+.bitacora-analyze-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Resultados del análisis de hash */
+.analysis-results {
+    background-color: #e9f5ff;
+    border-left: 4px solid #007bff;
+    padding: 1rem;
+    border-radius: 5px;
+    margin-top: 1rem;
+    grid-column: 1 / -1;
+}
+
+.analysis-results h4 {
+    margin-top: 0;
+    color: #0056b3;
+}
+
+.analysis-results p {
+    margin: 0.5rem 0;
+}
+
+/* Estilos para el nivel de amenaza */
+.threat-level {
+    font-weight: bold;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+}
+
+.threat-level-crítico {
+    background-color: #dc3545; /* Rojo */
+}
+
+.threat-level-alto {
+    background-color: #ffc107; /* Amarillo */
+    color: #212529;
+}
+
+.threat-level-medio {
+    background-color: #fd7e14; /* Naranja */
+}
+
+.threat-level-bajo {
+    background-color: #28a745; /* Verde */
+}
+
+.threat-level-bueno {
+    background-color: #007bff; /* Azul */
+}
+
+.threat-level-desconocido {
+    background-color: #6c757d; /* Gris */
+}
+
+/* Botones del formulario */
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 2rem;
+    grid-column: 1 / -1;
+}
+
+.bitacora-save-button,
+.bitacora-new-button {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.bitacora-save-button {
+    background-color: #007bff;
+    color: white;
+}
+
+.bitacora-save-button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+.bitacora-new-button {
+    background-color: #6c757d;
+    color: white;
+}
+
+.bitacora-new-button:hover {
+    background-color: #5a6268;
+    transform: translateY(-2px);
+}
+
+/* Mensaje de estado */
+.message {
+    text-align: center;
+    margin-top: 1.5rem;
+    padding: 1rem;
+    border-radius: 5px;
+    font-weight: bold;
+    color: #333;
+    background-color: #e2f5e9;
+    border: 1px solid #c3e6cb;
+}
+/* Estilo para el botón de JSON */
+.json-button {
+ background-color: #007bff; /* Un tono de azul vibrante */
+ color: white; /* Color de texto blanco */
+ padding: 0.75rem 1.5rem; /* Relleno para que el botón sea más grande y legible */
+ border: none; /* Eliminar el borde predeterminado */
+ border-radius: 5px; /* Bordes redondeados */
+ font-size: 1rem; /* Tamaño de la fuente */
+ font-weight: bold; /* Texto en negrita */
+ cursor: pointer; /* Cambiar el cursor a una mano al pasar por encima */
+ transition: background-color 0.3s, transform 0.2s; /* Transición suave al pasar el mouse */
+}
+
+.json-button:hover {
+ background-color: #0069d9; /* Un tono de azul más oscuro al pasar el mouse */
+ transform: translateY(-2px); /* Un pequeño efecto de elevación al pasar el mouse */
+}

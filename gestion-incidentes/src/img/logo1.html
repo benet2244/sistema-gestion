@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<!-- saved from url=(0037)https://192.168.39.75/Nexus/login.php -->
+<html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - Nexus</title>
+    <link rel="stylesheet" href="https://192.168.39.75/Nexus/assets/style-login.css">
+    <link rel="icon" type="image/png" href="https://192.168.39.75/Nexus/assets/Logo.png">
+</head>
+<body>
+    <div class="main-container">
+        <div class="left-panel">
+            <div class="logo-container">
+                <img src="https://192.168.39.75/Nexus/assets/Logo.png" alt="Nexus Logo" class="logo-small">
+                <span>Ingreso de Visitas - NEXUS</span>
+            </div>
+            <div class="welcome-section">
+                <h1>¡Bienvenido de nuevo!</h1>
+                <p>Ingrese sus datos de inicio de sesión a continuación</p>
+
+                
+                <form method="POST" action="https://192.168.39.75/Nexus/login.php" autocomplete="off">
+                    <div class="form-group">
+                        <label for="catalogo">Catálogo</label>
+                        <input type="text" name="catalogo" id="catalogo" placeholder="Ingrese su catálogo" required="" autofocus="">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="clave">Contraseña</label>
+                        <div class="password-wrapper">
+                            <input type="password" name="clave" id="clave" placeholder="Ingrese la contraseña" required="">
+                            <span class="toggle-password" id="togglePassword">Mostrar</span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-primary">Iniciar Sesión</button>
+                </form>
+                
+                <p class="signup-link">¿No tienes una cuenta? <a href="https://192.168.39.75/Nexus/registro.php">Regístrate</a></p>
+                
+                <div class="asistencia-section">
+                    <a href="https://192.168.39.75/Nexus/tomar_asistencia.php" class="btn-secondary">Tomar asistencia</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <img src="https://192.168.39.75/Nexus/assets/Foto-Lateral.png" alt="Ilustración de seguridad de contraseñas y 2FA" class="right-panel-image">
+            <div class="right-panel-text">
+                <p>Administra el acceso de visitas de forma inteligente con <br> <strong>Nexus</strong></p>
+            </div>
+        </div>
+    </div>
+    <script>
+        const claveInput = document.getElementById('clave');
+        const togglePassword = document.getElementById('togglePassword');
+
+        if (togglePassword) {
+            togglePassword.addEventListener('click', function() {
+                const type = claveInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                claveInput.setAttribute('type', type);
+                this.textContent = type === 'password' ? 'Mostrar' : 'Ocultar';
+            });
+        }
+    </script>
+
+</body></html>

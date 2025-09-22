@@ -1,0 +1,141 @@
+/* Contenedor principal del formulario */
+.incident-form-container {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 2.5rem;
+    background-color: #f4f7f9;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    font-family: 'Arial', sans-serif;
+}
+
+/* Encabezado del formulario */
+.incident-form-container h2 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 2rem;
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+/* Estilo para los grupos de formulario */
+.form-group {
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Estilo para las etiquetas de los campos */
+.form-group label {
+    font-weight: bold;
+    color: #34495e;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+/* Estilo para los campos de entrada y selección */
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 0.75rem;
+    border: 1px solid #c8d2d9;
+    border-radius: 8px;
+    font-size: 1rem;
+    color: #333;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Foco en los campos */
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+    outline: none;
+}
+
+/* Estilo para el área de texto */
+.form-group textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+/* Contenedor para los campos en dos columnas */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+/* Contenedor de botones */
+.button-group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+/* Estilo para los botones */
+.submit-btn, .cancel-btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Estilo para el botón de guardar */
+.submit-btn {
+    background-color: #3498db;
+    color: white;
+}
+
+.submit-btn:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Estilo para el botón de cancelar */
+.cancel-btn {
+    background-color: #bdc3c7;
+    color: #34495e;
+}
+
+.cancel-btn:hover {
+    background-color: #95a5a6;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Estilo para el mensaje de estado */
+.message {
+    text-align: center;
+    margin-top: 1rem;
+    font-weight: bold;
+}
+
+/* Responsividad para pantallas pequeñas */
+@media (max-width: 768px) {
+    .incident-form-container {
+        padding: 1.5rem;
+        margin: 1rem;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr; /* Una sola columna en dispositivos pequeños */
+        gap: 1.5rem;
+    }
+
+    .button-group {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .submit-btn, .cancel-btn {
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+}
