@@ -1,5 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
+
+const meses = [
+    'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+];
+
+const getDaysInMonth = (month, year) => {
+    const monthIndex = meses.indexOf(month);
+    if (monthIndex === -1) return 31;
+    const date = new Date(year, monthIndex + 1, 0);
+    return date.getDate();
+};
 
 const BitacoraMensual = () => {
     const [mes, setMes] = useState('');
@@ -18,22 +30,10 @@ const BitacoraMensual = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
-    const meses = [
-        'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
-    ];
-
     const currentYear = new Date().getFullYear();
     const years = Array.from({ length: 5 }, (_, i) => currentYear - i);
 
-    const getDaysInMonth = (month, year) => {
-        const monthIndex = meses.indexOf(month);
-        if (monthIndex === -1) return 31;
-        const date = new Date(year, monthIndex + 1, 0);
-        return date.getDate();
-    };
-
-    const fetchBitacoraData = async (selectedMes, selectedYear) => {
+    const fetchBitacoraData = useCallback(async (selectedMes, selectedYear) => {
         if (!selectedMes || !selectedYear) {
             setRegistros(Array(31).fill({
                 malware: 0,
@@ -106,11 +106,11 @@ const BitacoraMensual = () => {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, []);
 
     useEffect(() => {
         fetchBitacoraData(mes, year);
-    }, [mes, year]);
+    }, [mes, year, fetchBitacoraData]);
 
     const handleInputChange = (index, event) => {
         const { name, value } = event.target;
@@ -131,7 +131,7 @@ const BitacoraMensual = () => {
         try {
             const dataToSave = registros.map((reg, index) => ({
                 ...reg,
-                fecha: `${year}-${String(meses.indexOf(mes) + 1).padStart(2, '0')}-${String(index + 1).padStart(2, '0')}`,
+                fecha: `${year}-${String(meses.indexOf(mes) + 1).padStart(2, '0')}-${String(index + 1).padStart(2, '0')}`
             }));
 
             const response = await axios.post('http://192.168.39.115/gestion-incidentes/backend/bitacora_mensual.php', {

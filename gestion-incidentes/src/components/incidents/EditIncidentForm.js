@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
-import '../IncidentCss/EditIncidentForm.css';
 
 const EditIncidentForm = () => {
     const { id } = useParams();

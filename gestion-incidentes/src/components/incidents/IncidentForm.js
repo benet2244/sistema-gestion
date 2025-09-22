@@ -91,13 +91,12 @@ const IncidentForm = ({ onIncidentAdded, onIncidentEdited, currentIncident, setC
     setMessage('');
     setIsError(false);
     try {
-        let response;
         if (currentIncident) {
-            response = await axios.put(`https://192.168.39.115/gestion-incidentes/backend/incidentes.php?id=${currentIncident.id}`, formData);
+            await axios.put(`https://192.168.39.115/gestion-incidentes/backend/incidentes.php?id=${currentIncident.id}`, formData);
             setMessage('Incidente actualizado exitosamente.');
             if (onIncidentEdited) onIncidentEdited();
         } else {
-            response = await axios.post('https://192.168.39.115/gestion-incidentes/backend/incidentes.php', formData);
+            await axios.post('https://192.168.39.115/gestion-incidentes/backend/incidentes.php', formData);
             setMessage('Incidente registrado exitosamente.');
             if (onIncidentAdded) onIncidentAdded();
         }

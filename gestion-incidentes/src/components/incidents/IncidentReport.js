@@ -33,8 +33,8 @@ const IncidentReport = () => {
 
     const handleGeneratePDF = async (data, start, end) => {
         const pdfDoc = await PDFDocument.create();
-        const page = pdfDoc.addPage();
-        const { width, height } = page.getSize();
+        let page = pdfDoc.addPage();
+        const { height } = page.getSize();
         const margin = 50;
         let y = height - 50;
 
