@@ -1,0 +1,114 @@
+/* Estilos para el componente IncidentList */
+
+.incident-list-container {
+  padding: 2rem;
+  background-color: #f9fafb; /* Un fondo ligeramente distinto para la página */
+}
+
+.incident-list-header {
+  font-size: 1.75rem; /* text-2xl */
+  font-weight: 700; /* font-bold */
+  color: #1f2937; /* text-gray-800 */
+  margin-bottom: 1.5rem;
+}
+
+.table-wrapper {
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); /* shadow-lg */
+  border-radius: 0.5rem; /* rounded-lg */
+  overflow-x: auto; /* La clave para la responsividad de la tabla */
+  background-color: #ffffff;
+}
+
+.incidents-table {
+  width: 100%;
+  border-collapse: collapse; /* Asegura que los bordes se fusionen */
+  white-space: nowrap; /* Evita que el texto de las celdas se parta en varias líneas */
+}
+
+.incidents-table thead {
+  background-color: #e5e7eb; /* bg-gray-200 */
+}
+
+.incidents-table th {
+  padding: 1rem 1.5rem;
+  text-align: left;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.incidents-table tbody tr {
+  border-bottom: 1px solid #f3f4f6; /* border-gray-100 */
+  transition: background-color 0.2s ease-in-out;
+}
+
+.incidents-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.incidents-table tbody tr:hover {
+  background-color: #f9fafb; /* hover:bg-gray-50 */
+}
+
+.incidents-table td {
+  padding: 1rem 1.5rem;
+  font-size: 0.875rem;
+  color: #4b5563; /* text-gray-700 */
+  vertical-align: middle;
+}
+
+/* Estilos para los botones de acción */
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.action-button {
+  font-weight: 600; /* font-bold */
+  padding: 0.25rem 0.75rem; /* py-1 px-2 */
+  border-radius: 0.375rem; /* rounded */
+  border: none;
+  cursor: pointer;
+  color: white;
+  transition: background-color 0.2s ease-in-out;
+  font-size: 0.8rem;
+}
+
+.edit-button {
+  background-color: #3b82f6; /* bg-blue-500 */
+}
+
+.edit-button:hover {
+  background-color: #2563eb; /* hover:bg-blue-700 */
+}
+
+.delete-button {
+  background-color: #ef4444; /* bg-red-500 */
+}
+
+.delete-button:hover {
+  background-color: #dc2626; /* hover:bg-red-700 */
+}
+
+/* Mensajes de carga y error */
+.loading-message,
+.error-message {
+  text-align: center;
+  padding: 2rem;
+}
+
+.loading-message {
+  color: #6b7280; /* text-gray-500 */
+  font-size: 1rem;
+}
+
+.error-alert {
+  background-color: #fee2e2; /* bg-red-100 */
+  border: 1px solid #fca5a5; /* border-red-400 */
+  color: #b91c1c; /* text-red-700 */
+  padding: 1rem 1.5rem;
+  border-radius: 0.5rem;
+  text-align: center;
+}

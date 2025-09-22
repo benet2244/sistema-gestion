@@ -1,0 +1,251 @@
+/* Estilos para el componente Dashboard */
+
+.dashboard-container {
+  padding: 2rem;
+  background-color: #f3f4f6; /* bg-gray-100 */
+  min-height: 100vh;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.dashboard-title {
+  font-size: 2.25rem; /* text-4xl */
+  font-weight: 700; /* font-bold */
+  color: #1f2937; /* text-gray-800 */
+}
+
+.refresh-button {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: white;
+  background-color: #2563eb; /* bg-blue-600 */
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.refresh-button:hover {
+  background-color: #1d4ed8; /* hover:bg-blue-700 */
+}
+
+/* Grid para las tarjetas y gráficos */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 1.5rem;
+}
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+/* Media Queries para grids responsivas */
+@media (min-width: 768px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .charts-grid {
+    grid-template-columns: repeat(2, 1fr); /* CORREGIDO: Rejilla simple de 2 columnas */
+  }
+}
+
+/* Estilos para las tarjetas de estadísticas */
+.dashboard-card {
+  background-color: white;
+  border-radius: 0.75rem; /* rounded-xl */
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); /* shadow-lg */
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-left: 4px solid;
+}
+
+.card-content .card-title {
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #6b7280; /* text-gray-500 */
+}
+
+.card-content .card-value {
+  font-size: 1.875rem; /* text-3xl */
+  font-weight: 800; /* font-extrabold */
+  color: #1f2937; /* text-gray-800 */
+}
+
+.card-icon {
+  color: #d1d5db; /* text-gray-300 */
+}
+
+.card-icon svg {
+    height: 2.5rem; /* h-10 */
+    width: 2.5rem; /* w-10 */
+}
+
+/* Colores de borde específicos */
+.border-blue {
+  border-color: #3b82f6; 
+}
+.border-red {
+  border-color: #ef4444; 
+}
+.border-green {
+  border-color: #22c55e; 
+}
+
+
+/* Estilos para los contenedores de gráficos */
+.chart-container {
+  background-color: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+  padding: 1.5rem;
+  height: 24rem; /* h-96 */
+  display: flex;
+  flex-direction: column;
+}
+
+.chart-title {
+  font-size: 1.25rem; /* text-xl */
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 1rem;
+}
+
+.chart-wrapper {
+    position: relative; 
+    flex-grow: 1;
+}
+
+.chart-placeholder {
+    text-align: center;
+    color: #6b7280;
+    padding-top: 4rem; 
+}
+
+/* Estilos para la tabla de incidentes recientes */
+.recent-incidents-container {
+  background-color: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+  margin-top: 2rem;
+  padding: 1.5rem;
+  overflow-x: auto;
+}
+
+.recent-incidents-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 1rem;
+}
+
+.incidents-table {
+  width: 100%;
+  text-align: left;
+  border-collapse: collapse;
+}
+
+.incidents-table thead {
+  border-bottom: 2px solid #e5e7eb; 
+}
+
+.incidents-table th {
+  padding: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #4b5563; 
+}
+
+.incidents-table tbody tr {
+  border-bottom: 1px solid #f3f4f6; 
+  transition: background-color 0.2s;
+}
+
+.incidents-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.incidents-table tbody tr:hover {
+  background-color: #f9fafb; 
+}
+
+.incidents-table td {
+  padding: 0.75rem;
+  font-size: 0.875rem;
+  color: #374151; 
+}
+
+/* Estilos para las "píldoras" de estado/prioridad */
+.status-pill {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem; /* text-xs */
+  font-weight: 600;
+  border-radius: 9999px; /* rounded-full */
+}
+
+.pill-high {
+  background-color: #fee2e2; 
+  color: #991b1b; 
+}
+
+.pill-medium {
+  background-color: #fef3c7; 
+  color: #92400e; 
+}
+
+.pill-low {
+  background-color: #dbeafe; 
+  color: #1e40af; 
+}
+
+.pill-clean {
+  background-color: #d1fae5; 
+  color: #065f46; 
+}
+
+.pill-infected {
+  background-color: #f3e8ff; 
+  color: #6b21a8; 
+}
+
+/* Mensajes de carga y error */
+.loading-message,
+.error-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.loading-message {
+  color: #4b5563;
+}
+
+.error-message {
+  padding: 2rem;
+  background-color: #fef2f2; 
+  color: #dc2626; 
+  border-radius: 0.5rem;
+}

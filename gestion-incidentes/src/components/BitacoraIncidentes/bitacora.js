@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
+import './bitacora.css'; // Importar la nueva hoja de estilos
 
 const sections = [
   "1. Asignación del Flujo de Trabajo",
@@ -19,7 +20,7 @@ const sections = [
   "14. Consultas de Investigación",
 ];
 
-// Data Structures
+// Estructuras de datos iniciales
 const initialInvestigationQueriesData = [{ 'ID de consulta': '', 'Enviado por': '', 'Plataforma': '', 'Objetivo': '', 'Consulta': '', 'Notas': '' }];
 const initialForensicKeywordsData = [{ 'ID de palabra clave': '', 'Palabras clave forenses de alta fidelidad': '', 'Nota': '' }];
 const initialApplicationsData = [{ 'ID de la aplicación': '', 'Enviado por': '', 'Estado': '', 'Nombre de la aplicación': '', 'Nivel de aplicación': '', 'Rol de la aplicación': '', 'Grupo propietario': '', 'Líder inicial': '', 'Hallazgos': '', 'evidencia más temprana (UTC)': '', 'Última evidencia (UTC)': '', 'Fuente': '', 'Notas': '' }];
@@ -55,29 +56,30 @@ const initialFormData = {
     inteligencia: initialRFIdata,
 };
 
-const sectionColorClasses = {
-    yellow: "bg-yellow-100 border-yellow-500 text-yellow-800",
-    red: "bg-red-100 border-red-500 text-red-800",
-    gray: "bg-gray-100 border-gray-500 text-gray-800",
-    default: "bg-white border-gray-300 text-gray-700",
-    active: "bg-blue-500 border-blue-700 text-white",
-};
+// Función para obtener la clase de estilo de la sección
+const getSectionClass = (section, activeSection) => {
+    const classMap = {
+        active: 'is-active',
+        workflow: 'is-workflow',
+        investigation: 'is-investigation',
+        intel: 'is-intel',
+        default: 'is-default'
+    };
 
-const getSectionColorClass = (section, activeSection) => {
-    if (section === activeSection) return sectionColorClasses.active;
-    if (sections.slice(0, 4).includes(section)) return sectionColorClasses.yellow;
-    if (sections.slice(4, 10).includes(section)) return sectionColorClasses.red;
-    if (sections.slice(10, 14).includes(section)) return sectionColorClasses.gray;
-    return sectionColorClasses.default;
+    if (section === activeSection) return classMap.active;
+    if (sections.indexOf(section) < 4) return classMap.workflow;
+    if (sections.indexOf(section) < 10) return classMap.investigation;
+    if (sections.indexOf(section) < 14) return classMap.intel;
+    return classMap.default;
 };
 
 
 const Bitacora = () => {
     const [activeSection, setActiveSection] = useState(sections[0]);
-    const [formData, setFormData] = useState(initialFormData);
+    const [formData, setFormData] = useState(JSON.parse(JSON.stringify(initialFormData))); // Deep copy
 
     const handleClearForm = () => {
-        setFormData(JSON.parse(JSON.stringify(initialFormData))); // Deep copy
+        setFormData(JSON.parse(JSON.stringify(initialFormData)));
         setActiveSection(sections[0]);
     };
 
@@ -94,59 +96,65 @@ const Bitacora = () => {
     const handleSaveExcel = () => {
         const workbook = XLSX.utils.book_new();
         Object.keys(formData).forEach(key => {
-            if (Array.isArray(formData[key])) {
-                const sheetName = sections.find(s => s.toLowerCase().replace(/[^a-z0-9]/g, '') === key.toLowerCase().replace(/[^a-z0-9]/g, '')) || key;
-                XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(formData[key]), sheetName.substring(0, 31));
+            // Asegurarnos de que el dato es un array y tiene contenido
+            if (Array.isArray(formData[key]) && formData[key].length > 0) {
+                // Mapear el nombre de la sección de forma segura
+                const sectionName = Object.keys(sectionComponentMap).find(name => sectionComponentMap[name].dataKey === key);
+                const sheetName = sectionName ? sectionName.substring(0, 31) : key.substring(0, 31);
+                
+                const worksheet = XLSX.utils.json_to_sheet(formData[key]);
+                XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
             }
         });
         const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
-        saveAs(new Blob([excelBuffer], { type: "application/octet-stream" }), "bitacora.xlsx");
+        saveAs(new Blob([excelBuffer], { type: "application/octet-stream" }), "bitacora_investigacion.xlsx");
     };
 
-    const renderSection = () => {
-        const sectionMap = {
-            "1. Asignación del Flujo de Trabajo": { data: formData.asignacionFlujo, handler: (e, r, c) => handleTableChange("asignacionFlujo", r, c, e.target.value) },
-            "2. Rastreador del Flujo de Trabajo": { data: formData.rastreadorFlujo, handler: (e, r, c) => handleTableChange("rastreadorFlujo", r, c, e.target.value), addRow: () => addRow('rastreadorFlujo', initialNotesData) },
-            "3. Lista de Control": { data: formData.listaControl, handler: (e, r, c) => handleTableChange("listaControl", r, c, e.target.value), addRow: () => addRow('listaControl', initialNotesData) },
-            "4. Notas de la Investigación": { data: formData.notasInvestigacion, handler: (e, r, c) => handleTableChange("notasInvestigacion", r, c, e.target.value), addRow: () => addRow('notasInvestigacion', initialNotesData) },
-            "5. Cronología de Eventos": { data: formData.cronologia, handler: (e, r, c) => handleTableChange("cronologia", r, c, e.target.value), addRow: () => addRow('cronologia', initialEventsData) },
-            "6. Sistemas": { data: formData.sistemas, handler: (e, r, c) => handleTableChange("sistemas", r, c, e.target.value), addRow: () => addRow('sistemas', initialSystemsData) },
-            "7. Cuentas": { data: formData.cuentas, handler: (e, r, c) => handleTableChange("cuentas", r, c, e.target.value), addRow: () => addRow('cuentas', initialAccountsData) },
-            "8. Indicadores del Host": { data: formData.indicadoresHost, handler: (e, r, c) => handleTableChange("indicadoresHost", r, c, e.target.value), addRow: () => addRow('indicadoresHost', initialHostIndicatorsData) },
-            "9. Indicadores de Red": { data: formData.indicadoresRed, handler: (e, r, c) => handleTableChange("indicadoresRed", r, c, e.target.value), addRow: () => addRow('indicadoresRed', initialNetworkIndicatorsData) },
-            "10. Inteligencia - RFI": { data: formData.inteligencia, handler: (e, r, c) => handleTableChange("inteligencia", r, c, e.target.value), addRow: () => addRow('inteligencia', initialRFIdata) },
-            "11. Rastreador de Evidencia": { data: formData.evidencia, handler: (e, r, c) => handleTableChange("evidencia", r, c, e.target.value), addRow: () => addRow('evidencia', initialEvidenceData) },
-            "12. Aplicaciones": { data: formData.aplicaciones, handler: (e, r, c) => handleTableChange("aplicaciones", r, c, e.target.value), addRow: () => addRow('aplicaciones', initialApplicationsData) },
-            "13. Palabras Clave Forenses": { data: formData.palabrasClave, handler: (e, r, c) => handleTableChange("palabrasClave", r, c, e.target.value), addRow: () => addRow('palabrasClave', initialForensicKeywordsData) },
-            "14. Consultas de Investigación": { data: formData.consultas, handler: (e, r, c) => handleTableChange("consultas", r, c, e.target.value), addRow: () => addRow('consultas', initialInvestigationQueriesData) },
-        };
+    const sectionComponentMap = {
+        "1. Asignación del Flujo de Trabajo": { dataKey: 'asignacionFlujo', initialData: null },
+        "2. Rastreador del Flujo de Trabajo": { dataKey: 'rastreadorFlujo', initialData: initialNotesData },
+        "3. Lista de Control": { dataKey: 'listaControl', initialData: initialNotesData },
+        "4. Notas de la Investigación": { dataKey: 'notasInvestigacion', initialData: initialNotesData },
+        "5. Cronología de Eventos": { dataKey: 'cronologia', initialData: initialEventsData },
+        "6. Sistemas": { dataKey: 'sistemas', initialData: initialSystemsData },
+        "7. Cuentas": { dataKey: 'cuentas', initialData: initialAccountsData },
+        "8. Indicadores del Host": { dataKey: 'indicadoresHost', initialData: initialHostIndicatorsData },
+        "9. Indicadores de Red": { dataKey: 'indicadoresRed', initialData: initialNetworkIndicatorsData },
+        "10. Inteligencia - RFI": { dataKey: 'inteligencia', initialData: initialRFIdata },
+        "11. Rastreador de Evidencia": { dataKey: 'evidencia', initialData: initialEvidenceData },
+        "12. Aplicaciones": { dataKey: 'aplicaciones', initialData: initialApplicationsData },
+        "13. Palabras Clave Forenses": { dataKey: 'palabrasClave', initialData: initialForensicKeywordsData },
+        "14. Consultas de Investigación": { dataKey: 'consultas', initialData: initialInvestigationQueriesData },
+    };
 
-        const current = sectionMap[activeSection];
-        if (!current) return null;
+    const renderSectionContent = () => {
+        const config = sectionComponentMap[activeSection];
+        if (!config) return null;
 
-        const headers = Object.keys(current.data[0] || {});
+        const data = formData[config.dataKey];
+        const headers = Object.keys(data[0] || {});
 
         return (
-            <div className="overflow-x-auto bg-white rounded-lg shadow">
-                <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
+            <div className="table-wrapper">
+                <table className="data-table">
+                    <thead>
                         <tr>
-                            {headers.map(header => <th key={header} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{header}</th>)}
+                            {headers.map(header => <th key={header}>{header}</th>)}
                         </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                        {current.data.map((row, rowIndex) => (
-                            <tr key={rowIndex} className="hover:bg-gray-100">
+                    <tbody>
+                        {data.map((row, rowIndex) => (
+                            <tr key={rowIndex}>
                                 {headers.map(colName => (
-                                    <td key={colName} className="px-6 py-4 whitespace-nowrap text-sm">
+                                    <td key={colName}>
                                         {colName === 'flujo de trabajo' && activeSection === "1. Asignación del Flujo de Trabajo" ? (
-                                            <span className="font-semibold">{row[colName]}</span>
+                                            <span className="readonly-cell">{row[colName]}</span>
                                         ) : (
                                             <input
                                                 type="text"
                                                 value={row[colName]}
-                                                onChange={(e) => current.handler(e, rowIndex, colName)}
-                                                className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                                                onChange={(e) => handleTableChange(config.dataKey, rowIndex, colName, e.target.value)}
+                                                className="table-input"
                                             />
                                         )}
                                     </td>
@@ -155,9 +163,9 @@ const Bitacora = () => {
                         ))}
                     </tbody>
                 </table>
-                {current.addRow && (
-                    <div className="p-4 bg-gray-50 text-right">
-                        <button onClick={current.addRow} className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700">+ Agregar Fila</button>
+                {config.initialData && (
+                    <div className="table-actions">
+                        <button onClick={() => addRow(config.dataKey, config.initialData)} className="add-row-button">+ Agregar Fila</button>
                     </div>
                 )}
             </div>
@@ -165,31 +173,33 @@ const Bitacora = () => {
     };
 
     return (
-        <div className="flex flex-col md:flex-row min-h-screen bg-gray-100 font-sans">
-            {/* Sidebar */}
-            <div className="w-full md:w-64 bg-white shadow-lg p-4 space-y-2">
-                <h1 className="text-2xl font-bold text-gray-800 mb-4">Bitácora Ciberdefensa</h1>
-                {sections.map((section) => (
-                    <button
-                        key={section}
-                        onClick={() => setActiveSection(section)}
-                        className={`w-full text-left p-3 rounded-lg transition-colors duration-200 text-sm font-medium border-l-4 ${getSectionColorClass(section, activeSection)}`}
-                    >
-                        {section}
-                    </button>
-                ))}
-            </div>
+        <div className="bitacora-container">
+            {/* Barra lateral */}
+            <aside className="bitacora-sidebar">
+                <h1 className="sidebar-title">Bitácora Ciberdefensa</h1>
+                <nav className="sidebar-nav">
+                    {sections.map((section) => (
+                        <button
+                            key={section}
+                            onClick={() => setActiveSection(section)}
+                            className={`sidebar-button ${getSectionClass(section, activeSection)}`}
+                        >
+                            {section}
+                        </button>
+                    ))}
+                </nav>
+            </aside>
 
-            {/* Content */}
-            <main className="flex-1 p-4 md:p-8">
-                <div className="bg-white p-6 rounded-2xl shadow-xl">
-                    <h2 className="text-3xl font-bold text-gray-900 mb-6">{activeSection}</h2>
-                    {renderSection()}
-                    <div className="flex flex-col sm:flex-row gap-4 mt-6">
-                        <button onClick={handleSaveExcel} className="w-full sm:w-auto flex-1 px-6 py-3 text-sm font-bold text-white bg-green-600 rounded-lg hover:bg-green-700 transition-transform transform hover:scale-105">
+            {/* Contenido principal */}
+            <main className="bitacora-content">
+                <div className="content-card">
+                    <h2 className="section-title">{activeSection}</h2>
+                    {renderSectionContent()}
+                    <div className="main-actions">
+                        <button onClick={handleSaveExcel} className="action-button save-button">
                             Guardar Bitácora (Excel)
                         </button>
-                        <button onClick={handleClearForm} className="w-full sm:w-auto flex-1 px-6 py-3 text-sm font-bold text-white bg-red-600 rounded-lg hover:bg-red-700 transition-transform transform hover:scale-105">
+                        <button onClick={handleClearForm} className="action-button clear-button">
                             Limpiar Formularios
                         </button>
                     </div>

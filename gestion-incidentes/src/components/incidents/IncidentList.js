@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import './IncidentList.css'; // Importar el nuevo archivo CSS
 
 const IncidentList = () => {
     const [incidents, setIncidents] = useState([]);
@@ -17,7 +18,8 @@ const IncidentList = () => {
         setError(null);
         try {
             const response = await axios.get('https://192.168.39.115/gestion-incidentes/backend/incidentes.php');
-            setIncidents(response.data);
+            // Asegurarnos de que siempre trabajamos con un array
+            setIncidents(Array.isArray(response.data) ? response.data : []);
         } catch (err) {
             console.error("Error al cargar los incidentes:", err);
             setError("No se pudieron cargar los incidentes. Intenta de nuevo más tarde.");
@@ -27,10 +29,16 @@ const IncidentList = () => {
     };
 
     const onIncidentDeleted = async (id) => {
+        // Opcional: Confirmación antes de eliminar
+        // if (!window.confirm('¿Estás seguro de que quieres eliminar este incidente?')) {
+        //     return;
+        // }
+
         setError(null);
         try {
             await axios.delete(`https://192.168.39.115/gestion-incidentes/backend/incidentes.php?id=${id}`);
-            fetchIncidents();
+            // Actualizar el estado localmente para una respuesta más rápida
+            setIncidents(prevIncidents => prevIncidents.filter(inc => inc.id !== id));
         } catch (err) {
             console.error("Error al eliminar el incidente:", err);
             setError("No se pudo eliminar el incidente. Intenta de nuevo.");
@@ -42,60 +50,66 @@ const IncidentList = () => {
     };
 
     if (loading) {
-        return <p className="text-center text-gray-500">Cargando incidentes...</p>;
+        return <p className="loading-message">Cargando incidentes...</p>;
     }
 
     if (error) {
-        return <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">{error}</div>;
+        return <div className="error-alert" role="alert">{error}</div>;
     }
 
     return (
-        <div className="container mx-auto p-4">
-            <h2 className="text-2xl font-bold mb-4 text-gray-800">Incidentes Registrados</h2>
-            <div className="shadow-lg rounded-lg overflow-x-auto">
-                <table className="w-full table-auto">
-                    <thead className="bg-gray-200">
+        <div className="incident-list-container">
+            <h2 className="incident-list-header">Incidentes Registrados</h2>
+            <div className="table-wrapper">
+                <table className="incidents-table">
+                    <thead>
                         <tr>
-                            <th className="px-4 py-2 text-left">ID</th>
-                            <th className="px-4 py-2 text-left">Tipo</th>
-                            <th className="px-4 py-2 text-left">Prioridad</th>
-                            <th className="px-4 py-2 text-left">Fecha</th>
-                            <th className="px-4 py-2 text-left">Responsable</th>
-                            <th className="px-4 py-2 text-left">Equipo Afectado</th>
-                            <th className="px-4 py-2 text-left">MAC</th>
-                            <th className="px-4 py-2 text-left">Dependencia</th>
-                            <th className="px-4 py-2 text-left">Detecciones</th>
-                            <th className="px-4 py-2 text-left">Estado</th>
-                            <th className="px-4 py-2 text-left">Acciones Tomadas</th>
-                            <th className="px-4 py-2 text-left">IOC</th>
-                            <th className="px-4 py-2 text-left">Nivel Amenaza</th>
-                            <th className="px-4 py-2 text-left">Detalles</th>
-                            <th className="px-4 py-2 text-left">Acciones</th>
+                            <th>ID</th>
+                            <th>Tipo</th>
+                            <th>Prioridad</th>
+                            <th>Fecha</th>
+                            <th>Responsable</th>
+                            <th>Equipo Afectado</th>
+                            <th>MAC</th>
+                            <th>Dependencia</th>
+                            <th>Detecciones</th>
+                            <th>Estado</th>
+                            <th>Acciones Tomadas</th>
+                            <th>IOC</th>
+                            <th>Nivel Amenaza</th>
+                            <th>Detalles</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
-                    <tbody className="text-gray-700">
-                        {incidents.map(inc => (
-                            <tr key={inc.id} className="border-b hover:bg-gray-100">
-                                <td className="px-4 py-2">{inc.id}</td>
-                                <td className="px-4 py-2">{inc.tipo_incidente}</td>
-                                <td className="px-4 py-2">{inc.prioridad}</td>
-                                <td className="px-4 py-2">{inc.fecha_incidente}</td>
-                                <td className="px-4 py-2">{inc.responsable}</td>
-                                <td className="px-4 py-2">{inc.equipo_afectado}</td>
-                                <td className="px-4 py-2">{inc.direccion_mac}</td>
-                                <td className="px-4 py-2">{inc.dependencia}</td>
-                                <td className="px-4 py-2">{inc.cantidad_detecciones}</td>
-                                <td className="px-4 py-2">{inc.estado_equipo}</td>
-                                <td className="px-4 py-2">{inc.acciones_tomadas}</td>
-                                <td className="px-4 py-2">{inc.hash_url}</td>
-                                <td className="px-4 py-2">{inc.nivel_amenaza}</td>
-                                <td className="px-4 py-2">{inc.detalles}</td>
-                                <td className="px-4 py-2">
-                                    <button onClick={() => onIncidentEdit(inc)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded mr-2">Editar</button>
-                                    <button onClick={() => onIncidentDeleted(inc.id)} className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">Eliminar</button>
-                                </td>
+                    <tbody>
+                        {incidents.length > 0 ? (
+                            incidents.map(inc => (
+                                <tr key={inc.id}>
+                                    <td>{inc.id}</td>
+                                    <td>{inc.tipo_incidente}</td>
+                                    <td>{inc.prioridad}</td>
+                                    <td>{inc.fecha_incidente}</td>
+                                    <td>{inc.responsable}</td>
+                                    <td>{inc.equipo_afectado}</td>
+                                    <td>{inc.direccion_mac}</td>
+                                    <td>{inc.dependencia}</td>
+                                    <td>{inc.cantidad_detecciones}</td>
+                                    <td>{inc.estado_equipo}</td>
+                                    <td>{inc.acciones_tomadas}</td>
+                                    <td>{inc.hash_url}</td>
+                                    <td>{inc.nivel_amenaza}</td>
+                                    <td>{inc.detalles}</td>
+                                    <td className="action-buttons">
+                                        <button onClick={() => onIncidentEdit(inc)} className="action-button edit-button">Editar</button>
+                                        <button onClick={() => onIncidentDeleted(inc.id)} className="action-button delete-button">Eliminar</button>
+                                    </td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan="15" style={{ textAlign: 'center', padding: '2rem' }}>No hay incidentes registrados.</td>
                             </tr>
-                        ))}
+                        )}
                     </tbody>
                 </table>
             </div>

@@ -1,0 +1,76 @@
+
+/* Estilos principales para App.js */
+
+.app-container {
+  display: flex;
+  height: 100vh;
+  background-color: #f4f7f6;
+  overflow: hidden;
+}
+
+.content-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: margin-left 0.3s ease-in-out;
+}
+
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2rem;
+  background-color: #eef2f5;
+}
+
+/* Estilos para la cabecera en móviles */
+.mobile-header {
+  display: none; /* Oculto por defecto en pantallas grandes */
+  background-color: #ffffff;
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  z-index: 100;
+}
+
+.mobile-menu-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.mobile-menu-icon {
+  height: 24px;
+  width: 24px;
+  color: #374151;
+}
+
+/* --- Media Queries para Responsive Design --- */
+
+/* Tablets y dispositivos más pequeños (hasta 768px) */
+@media (max-width: 768px) {
+  .app-container {
+    flex-direction: column;
+  }
+
+  .content-wrapper {
+    margin-left: 0 !important; /* Asegura que no haya margen cuando el menú está colapsado */
+  }
+
+  .mobile-header {
+    display: flex; /* Muestra la cabecera en móviles */
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .main-content {
+    padding: 1rem;
+  }
+}
+
+/* Móviles pequeños (hasta 480px) */
+@media (max-width: 480px) {
+  .main-content {
+    padding: 0.75rem;
+  }
+}

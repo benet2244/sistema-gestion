@@ -3,9 +3,9 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'r
 import Navbar from './components/navbar/navbar';
 import Dashboard from './components/dashboard/dashboard'; 
 import IncidentList from './components/incidents/IncidentList';
-import IncidentForm from './components/incidents/IncidentForm';
+import AddIncidentPage from './components/incidents/AddIncidentPage'; // Importar nuevo componente
+import EditIncidentPage from './components/incidents/EditIncidentPage'; // Importar nuevo componente
 import IncidentReport from './components/incidents/IncidentReport';
-import EditIncidentForm from './components/incidents/EditIncidentForm'; 
 import News from './components/news/news'; 
 import SavedNews from './components/news/SavedNews';
 import Bitacora from './components/BitacoraIncidentes/bitacora';
@@ -13,6 +13,7 @@ import Inicio from './components/inicio/inicio';
 import BitacoraMensual from './components/BitacoraAmenazas/BitacoraMensual';
 import BitacoraReporte from './components/BitacoraAmenazas/BitacoraReporte';
 import BitacoraGraficas from './components/BitacoraAmenazas/BitacoraGraficas';
+import './App.css'; // Importar el nuevo archivo CSS
 
 const PrivateRoute = ({ children, isLoggedIn }) => {
     return isLoggedIn ? children : <Navigate to="/" replace />;
@@ -44,7 +45,7 @@ const App = () => {
 
     const toggleNavbar = () => {
         setIsNavbarCollapsed(!isNavbarCollapsed);
-        setIsMobileMenuOpen(false);
+        setIsMobileMenuOpen(false); // Cierra el menú móvil si se colapsa la barra lateral
     };
   
     const toggleMobileMenu = () => {
@@ -54,7 +55,7 @@ const App = () => {
     const showNavbar = isLoggedIn && window.location.pathname !== '/';
 
     return (
-        <div className="flex h-screen bg-gray-100">
+        <div className="app-container">
             {showNavbar && (
                 <Navbar 
                     onLogout={handleLogout} 
@@ -64,17 +65,17 @@ const App = () => {
                     setIsMobileMenuOpen={setIsMobileMenuOpen}
                 />
             )}
-            <div className="flex-1 flex flex-col overflow-hidden">
+            <div className="content-wrapper">
                 {showNavbar && (
-                    <div className="bg-white shadow-md p-4 flex justify-between items-center md:hidden">
-                        <button onClick={toggleMobileMenu} className="text-gray-500 focus:outline-none">
-                            <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <div className="mobile-header">
+                        <button onClick={toggleMobileMenu} className="mobile-menu-button">
+                            <svg className="mobile-menu-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M4 6H20M4 12H20M4 18H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                             </svg>
                         </button>
                     </div>
                 )}
-                <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-200 p-4">
+                <main className="main-content">
                     <Routes>
                         <Route path="/" element={<Inicio onStart={handleLogin} />} />
                         <Route path="/dashboard" element={<PrivateRoute isLoggedIn={isLoggedIn}><Dashboard /></PrivateRoute>} />
@@ -91,11 +92,11 @@ const App = () => {
                         />
                         <Route 
                             path="/incidents/add" 
-                            element={<PrivateRoute isLoggedIn={isLoggedIn}><IncidentForm /></PrivateRoute>} 
+                            element={<PrivateRoute isLoggedIn={isLoggedIn}><AddIncidentPage /></PrivateRoute>} 
                         />
                         <Route 
                             path="/incidents/edit/:id" 
-                            element={<PrivateRoute isLoggedIn={isLoggedIn}><EditIncidentForm /></PrivateRoute>} 
+                            element={<PrivateRoute isLoggedIn={isLoggedIn}><EditIncidentPage /></PrivateRoute>} 
                         />
                         <Route 
                             path="/incidents/report" 

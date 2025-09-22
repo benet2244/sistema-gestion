@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
+import './IncidentReport.css'; // Importar el nuevo archivo CSS
 
 const IncidentReport = () => {
     const [startDate, setStartDate] = useState('');
@@ -134,56 +135,56 @@ const IncidentReport = () => {
     };
 
     return (
-        <div className="bg-gray-100 min-h-screen p-4 sm:p-6 lg:p-8">
-            <div className="max-w-6xl mx-auto space-y-10">
+        <div className="report-container">
+            <div className="report-wrapper">
 
-                <div className="bg-white p-6 md:p-8 rounded-2xl shadow-2xl">
-                    <h2 className="text-3xl font-extrabold text-gray-800 mb-6 border-b-2 pb-4">Generar Reporte de Incidentes</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                        <div>
-                            <label htmlFor="startDate" className="block text-sm font-semibold text-gray-600 mb-1">Fecha de Inicio</label>
-                            <input type="date" id="startDate" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                <div className="report-card">
+                    <h2 className="report-title">Generar Reporte de Incidentes</h2>
+                    <div className="date-selector-grid">
+                        <div className="date-input-group">
+                            <label htmlFor="startDate">Fecha de Inicio</label>
+                            <input type="date" id="startDate" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="date-input" />
                         </div>
-                        <div>
-                            <label htmlFor="endDate" className="block text-sm font-semibold text-gray-600 mb-1">Fecha de Fin</label>
-                            <input type="date" id="endDate" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                        <div className="date-input-group">
+                            <label htmlFor="endDate">Fecha de Fin</label>
+                            <input type="date" id="endDate" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="date-input" />
                         </div>
                     </div>
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center mt-4">
-                        <button onClick={() => handleGenerateReport('pdf')} className="flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3 font-bold text-white bg-red-600 rounded-lg hover:bg-red-700 transition-all shadow-md hover:shadow-lg"><span>Descargar PDF</span></button>
-                        <button onClick={() => handleGenerateReport('csv')} className="flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3 font-bold text-white bg-green-600 rounded-lg hover:bg-green-700 transition-all shadow-md hover:shadow-lg"><span>Descargar CSV</span></button>
-                        <button onClick={() => handleGenerateReport('json')} className="flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3 font-bold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-all shadow-md hover:shadow-lg"><span>Descargar JSON</span></button>
+                    <div className="report-actions">
+                        <button onClick={() => handleGenerateReport('pdf')} className="report-button pdf-button"><span>Descargar PDF</span></button>
+                        <button onClick={() => handleGenerateReport('csv')} className="report-button csv-button"><span>Descargar CSV</span></button>
+                        <button onClick={() => handleGenerateReport('json')} className="report-button json-button"><span>Descargar JSON</span></button>
                     </div>
-                    {message && <p className={`mt-6 text-center text-sm font-semibold ${isError ? 'text-red-600' : 'text-green-600'}`}>{message}</p>}
+                    {message && <p className={`feedback-message ${isError ? 'error' : 'success'}`}>{message}</p>}
                 </div>
 
-                <div className="bg-white p-6 md:p-8 rounded-2xl shadow-2xl">
-                    <h2 className="text-3xl font-extrabold text-gray-800 mb-6 border-b-2 pb-4">Bitácora de Reportes Generados</h2>
-                    {loadingHistory ? <p className="text-center text-gray-500">Cargando historial...</p> : (
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-left">
-                                <thead className="bg-gray-50 border-b-2 border-gray-200">
+                <div className="report-card">
+                    <h2 className="report-title">Bitácora de Reportes Generados</h2>
+                    {loadingHistory ? <p className="loading-message">Cargando historial...</p> : (
+                        <div className="history-table-wrapper">
+                            <table className="history-table">
+                                <thead>
                                     <tr>
-                                        <th className="p-4 text-sm font-semibold text-gray-600">ID</th>
-                                        <th className="p-4 text-sm font-semibold text-gray-600">Nombre del Reporte</th>
-                                        <th className="p-4 text-sm font-semibold text-gray-600">Fecha de Creación</th>
-                                        <th className="p-4 text-sm font-semibold text-gray-600 text-center">Formato</th>
+                                        <th>ID</th>
+                                        <th>Nombre del Reporte</th>
+                                        <th>Fecha de Creación</th>
+                                        <th style={{textAlign: 'center'}}>Formato</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {reportHistory.length > 0 ? reportHistory.map(report => (
-                                        <tr key={report.id} className="border-b border-gray-100 hover:bg-gray-50">
-                                            <td className="p-4 text-sm text-gray-800 font-medium">{report.id}</td>
-                                            <td className="p-4 text-sm text-gray-700">{report.nombre_reporte}</td>
-                                            <td className="p-4 text-sm text-gray-600">{new Date(report.fecha_creacion).toLocaleString()}</td>
-                                            <td className="p-4 text-sm text-center">
-                                                <span className={`px-3 py-1 text-xs font-bold text-white rounded-full ${report.formato === 'pdf' ? 'bg-red-500' : report.formato === 'csv' ? 'bg-green-500' : 'bg-blue-500'}`}>
+                                        <tr key={report.id}>
+                                            <td>{report.id}</td>
+                                            <td>{report.nombre_reporte}</td>
+                                            <td>{new Date(report.fecha_creacion).toLocaleString()}</td>
+                                            <td style={{textAlign: 'center'}}>
+                                                <span className={`format-pill format-${report.formato}`}>
                                                     {report.formato.toUpperCase()}
                                                 </span>
                                             </td>
                                         </tr>
                                     )) : (
-                                        <tr><td colSpan="4" className="text-center p-6 text-gray-500">No hay reportes en el historial.</td></tr>
+                                        <tr><td colSpan="4" style={{textAlign: 'center', padding: '2rem'}}>No hay reportes en el historial.</td></tr>
                                     )}
                                 </tbody>
                             </table>
