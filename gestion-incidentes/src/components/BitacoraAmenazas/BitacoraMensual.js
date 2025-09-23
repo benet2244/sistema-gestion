@@ -39,7 +39,9 @@ const BitacoraMensual = () => {
         setIsLoading(true);
         try {
             // Usando fetch y la URL estandarizada
-            const response = await fetch(`${API_BASE_URL}/bitacora_mensual.php?mes=${selectedMes}&year=${selectedYear}`);
+            const response = await fetch(`${API_BASE_URL}/bitacora_mensual.php?mes=${selectedMes}&year=${selectedYear}`, {
+                credentials: 'include'
+            });
             const data = await response.json();
 
             const initialRegistros = initializeRegistros(daysInMonth);
@@ -100,7 +102,8 @@ const BitacoraMensual = () => {
             const response = await fetch(`${API_BASE_URL}/bitacora_mensual.php`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ mes, year, registros: dataToSave })
+                body: JSON.stringify({ mes, year, registros: dataToSave }),
+                credentials: 'include'
             });
             const result = await response.json();
 

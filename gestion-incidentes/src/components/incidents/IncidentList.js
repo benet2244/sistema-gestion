@@ -20,7 +20,7 @@ const IncidentList = () => {
         setError(null);
         try {
             // Usando fetch y la URL estandarizada
-            const response = await fetch(`${API_BASE_URL}/incidentes.php`);
+            const response = await fetch(`${API_BASE_URL}/incidentes.php`, {credentials: 'include'});
             if (!response.ok) {
                 throw new Error('La respuesta de la red no fue correcta');
             }
@@ -43,7 +43,8 @@ const IncidentList = () => {
         try {
             // Usando fetch para el método DELETE
             const response = await fetch(`${API_BASE_URL}/incidentes.php?id=${id}`, {
-                method: 'DELETE'
+                method: 'DELETE',
+                credentials: 'include'
             });
             if (!response.ok) {
                 throw new Error('Error al eliminar el incidente');

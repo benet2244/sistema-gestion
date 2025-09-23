@@ -14,6 +14,7 @@ const navItems = [
     {
         name: 'Incidentes',
         submenu: [
+            { name: 'Lista de Incidentes', path: '/incidentes' },
             { name: 'Registrar Incidente', path: '/registrar-incidente' },
             // Puedes añadir más rutas de incidentes aquí si las creas en App.js
         ],

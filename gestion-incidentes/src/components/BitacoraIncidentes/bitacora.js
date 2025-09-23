@@ -106,6 +106,7 @@ const Bitacora = () => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(payload),
+                credentials: 'include'
             });
 
             const result = await response.json();

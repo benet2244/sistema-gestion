@@ -41,7 +41,7 @@ const BitacoraGraficas = () => {
             const url = new URL(`${API_BASE_URL}/graficas_bitacora.php`);
             Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
 
-            const response = await fetch(url);
+            const response = await fetch(url, {credentials: 'include'});
             const result = await response.json();
 
             if (result.success && result.data) {

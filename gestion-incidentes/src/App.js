@@ -3,10 +3,11 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import './App.css';
 
 // Rutas corregidas según la estructura de archivos real
-import Login from './components/inicio/inicio.js';
+import Login from './components/login/Login.js';
 import Navbar from './components/navbar/navbar.js';
 import Dashboard from './components/dashboard/dashboard.js';
 import IncidentForm from './components/incidents/IncidentForm.js';
+import IncidentList from './components/incidents/IncidentList.js';
 import ThreatLog from './components/BitacoraIncidentes/bitacora.js';
 import MonthlyLog from './components/BitacoraAmenazas/BitacoraMensual.js';
 import ThreatReport from './components/BitacoraAmenazas/BitacoraReporte.js';
@@ -35,8 +36,9 @@ function App() {
                 {isLoggedIn && <Navbar onLogout={handleLogout} />}
                 <div className={isLoggedIn ? "content-wrapper" : ""}>
                     <Routes>
-                        <Route path="/login" element={isLoggedIn ? <Navigate to="/" /> : <Login onLogin={handleLogin} />} />
+                        <Route path="/login" element={isLoggedIn ? <Navigate to="/" /> : <Login onLoginSuccess={handleLogin} />} />
                         <Route path="/" element={isLoggedIn ? <Dashboard /> : <Navigate to="/login" />} />
+                        <Route path="/incidentes" element={isLoggedIn ? <IncidentList /> : <Navigate to="/login" />} />
                         <Route path="/registrar-incidente" element={isLoggedIn ? <IncidentForm /> : <Navigate to="/login" />} />
                         <Route path="/bitacora-amenazas" element={isLoggedIn ? <ThreatLog /> : <Navigate to="/login" />} />
                         <Route path="/bitacora-mensual" element={isLoggedIn ? <MonthlyLog /> : <Navigate to="/login" />} />

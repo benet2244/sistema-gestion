@@ -1,5 +1,8 @@
 <?php
-header("Access-Control-Allow-Origin: *");
+// Guardián de seguridad: verifica si el usuario ha iniciado sesión.
+require_once 'session_secure.php';
+
+// El resto de los headers son gestionados por el guardián o no son necesarios si las sesiones funcionan correctamente.
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 header("Content-Type: application/json; charset=UTF-8");
@@ -53,7 +56,7 @@ function determineThreatLevel($maliciousCount, $thresholds) {
     if ($maliciousCount >= $thresholds['Crítico']) return 'Crítico';
     if ($maliciousCount >= $thresholds['Alto']) return 'Alto';
     if ($maliciousCount >= $thresholds['Medio']) return 'Medio';
-    if ($maliciousCount > $thresholds['Bajo']) return 'Bajo';
+    if ($maliciousCount > $thresholds['Bajo']) return 'Bueno';
     return 'Bueno';
 }
 

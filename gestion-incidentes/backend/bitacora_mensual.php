@@ -1,9 +1,11 @@
 <?php
+// Guardián de seguridad: verifica si el usuario ha iniciado sesión.
+require_once 'session_secure.php';
 // Incluir el archivo de configuración de la base de datos
 require_once 'config.php';
 
 // Headers for CORS and JSON response
-header("Access-Control-Allow-Origin: *");
+// header("Access-Control-Allow-Origin: *"); // Reemplazado por el guardián
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");

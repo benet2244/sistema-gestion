@@ -55,6 +55,7 @@ const IncidentForm = ({ currentIncident, onFormSubmit }) => {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ hash: formData.hash_url }), // La clave ahora es 'hash'
+                credentials: 'include'
             });
 
             if (!response.ok) {
@@ -91,6 +92,7 @@ const IncidentForm = ({ currentIncident, onFormSubmit }) => {
                 method: currentIncident ? 'PUT' : 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),
+                credentials: 'include'
             });
 
             const data = await response.json();

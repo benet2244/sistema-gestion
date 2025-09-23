@@ -48,7 +48,7 @@ const BitacoraReporte = () => {
             url.searchParams.append('mesFin', mesFin);
             url.searchParams.append('year', year);
 
-            const response = await fetch(url);
+            const response = await fetch(url, {credentials: 'include'});
             const data = await response.json();
             
             if (data.success && data.data && data.data.length > 0) {
