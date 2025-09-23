@@ -1,37 +1,25 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import {
-  Chart as ChartJS, CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend,
-} from 'chart.js';
 import { Bar, Doughnut } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend } from 'chart.js';
 import './BitacoraGraficas.css';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend);
 
-const MESES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
-const threatKeys = { malware: 'Malware', phishing: 'Phishing', comando_y_control: 'Comando y Control', criptomineria: 'Criptominería', denegacion_de_servicios: 'Denegación de Servicios', intentos_de_conexion: 'Intentos de Conexión' };
-const threatColors = { malware: '#FF6384', phishing: '#36A2EB', comando_y_control: '#FFCE56', criptomineria: '#4BC0C0', denegacion_de_servicios: '#9966FF', intentos_de_conexion: '#FF9F40' };
-
-const KpiCard = ({ title, value, color }) => (
-    <div className="kpi-card" style={{ borderLeft: `5px solid ${color}` }}>
-        <p className="kpi-title">{title}</p>
-        <h3 className="kpi-value">{value.toLocaleString()}</h3>
-    </div>
-);
-
 const BitacoraGraficas = () => {
-    const currentYear = new Date().getFullYear();
     const [filterType, setFilterType] = useState('year');
-    const [year, setYear] = useState(currentYear);
+    const [year, setYear] = useState(new Date().getFullYear());
     const [month, setMonth] = useState(new Date().getMonth() + 1);
     const [dateRange, setDateRange] = useState({ start: '', end: '' });
-    
     const [data, setData] = useState({ trend: [], totals: {}, actorSummary: [] });
-    const [isLoading, setIsLoading] = useState(true);
     const [message, setMessage] = useState('');
-    const years = Array.from({ length: 5 }, (_, i) => currentYear - i);
+    const [isLoading, setIsLoading] = useState(false);
 
-    const fetchDashboardData = useCallback(async () => {
+    const currentYear = new Date().getFullYear();
+    const years = Array.from({ length: 5 }, (_, i) => currentYear - i);
+    const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+
+    const handleApplyFilter = async () => {
         setIsLoading(true);
         setMessage('');
         let params = {};
@@ -55,7 +43,7 @@ const BitacoraGraficas = () => {
                     actorSummary: response.data.data.actorSummary || [],
                 };
                 setData(safeData);
-                if (safeData.trend.length === 0 && safeData.actorSummary.length === 0) {
+                if (safeData.trend.length === 0 && (!safeData.totals || Object.keys(safeData.totals).length === 0) && safeData.actorSummary.length === 0) {
                     setMessage("No se encontraron datos para el período seleccionado.");
                 }
             } else {
@@ -65,90 +53,82 @@ const BitacoraGraficas = () => {
         } catch (error) {
             console.error("Error al cargar datos:", error);
             setData({ trend: [], totals: {}, actorSummary: [] });
-            setMessage("Error de conexión al cargar los datos.");
+            setMessage("Error crítico: No se pudo conectar con el servidor o el script falló. Revise la consola del navegador para más detalles.");
         } finally {
             setIsLoading(false);
         }
-    }, [filterType, year, month, dateRange]);
-
-    useEffect(() => { fetchDashboardData(); }, [fetchDashboardData]);
-
-    const actorChartData = {
-        labels: data.actorSummary.map(a => a.actor),
-        datasets: [{ label: 'Nº de Amenazas', data: data.actorSummary.map(a => a.count), backgroundColor: '#0694a2', borderColor: '#047481', borderWidth: 1 }],
     };
-    const actorChartOptions = { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } };
+    
+    useEffect(() => {
+        handleApplyFilter();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
-    const doughnutChartData = { labels: Object.values(threatKeys), datasets: [{ data: Object.keys(threatKeys).map(key => data.totals[`total_${key}`] || 0), backgroundColor: Object.values(threatColors) }] };
-    const doughnutOptions = { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } };
-
-    const getBarChartLabels = () => {
-        if (filterType === 'year') return MESES;
-        if (filterType === 'month') return Array.from({ length: new Date(year, month, 0).getDate() }, (_, i) => i + 1);
-        if (filterType === 'range') return [...new Set(data.trend.map(d => d.trend_unit))];
-        return [];
+    const chartOptions = {
+        responsive: true,
+        plugins: { legend: { position: 'top' }, title: { display: true, text: 'Tendencia de Amenazas' } },
+        scales: { y: { beginAtZero: true, stacked: true }, x: { stacked: true } },
     };
-    const barChartLabels = getBarChartLabels();
+
+    const doughnutOptions = {
+        responsive: true,
+        plugins: { legend: { position: 'right' }, title: { display: true, text: 'Resumen de Actores de Amenaza' } },
+    };
+
+    const threatTypes = ['total_malware', 'total_phishing', 'total_comando_y_control', 'total_criptomineria', 'total_denegacion_de_servicios', 'total_intentos_de_conexion'];
+    const threatLabels = ['Malware', 'Phishing', 'Comando y Control', 'Criptominería', 'Denegación de Servicios', 'Intentos de Conexión'];
+    const trendLabels = data.trend.map(d => d.trend_unit);
+
     const barChartData = {
-        labels: barChartLabels,
-        datasets: Object.keys(threatKeys).map(key => ({
-            label: threatKeys[key],
-            data: barChartLabels.map(label => {
-                let dataPoint;
-                if (filterType === 'year') dataPoint = data.trend.find(d => d.trend_unit === MESES.indexOf(label) + 1);
-                else if (filterType === 'month') dataPoint = data.trend.find(d => d.trend_unit == label);
-                else dataPoint = data.trend.find(d => d.trend_unit === label);
-                return dataPoint ? dataPoint[`total_${key}`] || 0 : 0;
-            }),
-            backgroundColor: threatColors[key],
+        labels: trendLabels,
+        datasets: threatTypes.map((type, i) => ({
+            label: threatLabels[i],
+            data: data.trend.map(d => d[type] || 0),
+            backgroundColor: `hsl(${i * 60}, 70%, 50%)`,
         })),
     };
-    const barOptions = { responsive: true, maintainAspectRatio: false, scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } } };
+
+    const doughnutData = {
+        labels: data.actorSummary.map(a => a.actor),
+        datasets: [{
+            data: data.actorSummary.map(a => a.count),
+            backgroundColor: data.actorSummary.map((_, i) => `hsl(${i * 360 / data.actorSummary.length}, 70%, 60%)`),
+        }],
+    };
 
     return (
-        <div className="graficas-dashboard-container"> {/* <-- CAMBIO CLAVE AQUI */}
-            <div className="dashboard-header">
-                <h2 className="dashboard-title">Dashboard de Amenazas</h2>
+        <div className="dashboard-container">
+            <h2 className="dashboard-title">Dashboard de Análisis de Amenazas</h2>
+            
+            <div className="filters-card">
+                <div className="filter-group">
+                    <label>Filtrar por:</label>
+                    <select value={filterType} onChange={(e) => setFilterType(e.target.value)}>
+                        <option value="year">Año</option>
+                        <option value="month">Mes</option>
+                        <option value="range">Rango de Fechas</option>
+                    </select>
+                </div>
+
+                {filterType === 'year' && (
+                     <div className="filter-group"><label>Año:</label><select value={year} onChange={(e) => setYear(e.target.value)}>{years.map(y => <option key={y} value={y}>{y}</option>)}</select></div>
+                )}
+                {filterType === 'month' && (
+                    <><div className="filter-group"><label>Mes:</label><select value={month} onChange={(e) => setMonth(e.target.value)}>{months.map((m, i) => <option key={m} value={i + 1}>{m}</option>)}</select></div>
+                    <div className="filter-group"><label>Año:</label><select value={year} onChange={(e) => setYear(e.target.value)}>{years.map(y => <option key={y} value={y}>{y}</option>)}</select></div></>
+                )}
+                {filterType === 'range' && (
+                    <><div className="filter-group"><label>Inicio:</label><input type="date" value={dateRange.start} onChange={(e) => setDateRange({ ...dateRange, start: e.target.value })}/></div>
+                    <div className="filter-group"><label>Fin:</label><input type="date" value={dateRange.end} onChange={(e) => setDateRange({ ...dateRange, end: e.target.value })}/></div></>
+                )}
+
+                <button onClick={handleApplyFilter} disabled={isLoading}>{isLoading ? 'Cargando...' : 'Aplicar Filtro'}</button>
             </div>
 
-            <div className="filter-controls">
-                <div className="filter-tabs">
-                    <button onClick={() => setFilterType('year')} className={filterType === 'year' ? 'active' : ''}>Anual</button>
-                    <button onClick={() => setFilterType('month')} className={filterType === 'month' ? 'active' : ''}>Mensual</button>
-                    <button onClick={() => setFilterType('range')} className={filterType === 'range' ? 'active' : ''}>Por Rango</button>
-                </div>
-                
-                <div className="filter-inputs">
-                    {(filterType === 'year' || filterType === 'month') && <select value={year} onChange={e => setYear(parseInt(e.target.value))}>{years.map(y => <option key={y} value={y}>{y}</option>)}</select>}
-                    {filterType === 'month' && <select value={month} onChange={e => setMonth(parseInt(e.target.value))}>{MESES.map((m, i) => <option key={i+1} value={i+1}>{m}</option>)}</select>}
-                    {filterType === 'range' && <><input type="date" value={dateRange.start} onChange={e => setDateRange({...dateRange, start: e.target.value})} /><input type="date" value={dateRange.end} onChange={e => setDateRange({...dateRange, end: e.target.value})} /></>}
-                    <button className="apply-filter-btn" onClick={fetchDashboardData}>Aplicar Filtro</button>
-                </div>
-            </div>
+            {message && <p className="feedback-message">{message}</p>}
 
-            {isLoading ? <div className="loading-container">Cargando...</div> :
-             message ? <div className="message-container">{message}</div> :
-             <>
-                <div className="kpi-grid">{Object.keys(threatKeys).map(key => <KpiCard key={key} title={threatKeys[key]} value={data.totals[`total_${key}`] || 0} color={threatColors[key]} />)}</div>
-                
-                <div className="summary-charts-grid">
-                    <div className="chart-card">
-                        <h3 className="chart-title">Amenazas por Actor</h3>
-                        <div className="chart-wrapper-actor">
-                           {data.actorSummary.length > 0 ? <Bar data={actorChartData} options={actorChartOptions} /> : <p className="no-data-msg">No hay datos de actores para este período.</p>}
-                        </div>
-                    </div>
-                    <div className="chart-card">
-                        <h3 className="chart-title">Distribución de Amenazas</h3>
-                        <div className="chart-wrapper-doughnut"><Doughnut data={doughnutChartData} options={doughnutOptions} /></div>
-                    </div>
-                </div>
-
-                <div className="chart-card full-width-chart">
-                    <h3 className="chart-title">Tendencia de Amenazas</h3>
-                    <div className="chart-wrapper-bar"><Bar data={barChartData} options={barOptions} /></div>
-                </div>
-            </>}
+            {data.trend.length > 0 && <div className="chart-card"><Bar options={chartOptions} data={barChartData} /></div>}
+            {data.actorSummary.length > 0 && <div className="chart-card"><Doughnut data={doughnutData} options={doughnutOptions} /></div>}
         </div>
     );
 };

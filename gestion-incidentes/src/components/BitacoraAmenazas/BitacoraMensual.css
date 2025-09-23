@@ -1,130 +1,217 @@
-/* --- Contenedor Principal --- */
+/* Contenedor Principal */
 .bitacora-container {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
     padding: 2rem;
-    background-color: #f8f9fa;
+    background-color: #f4f7f6;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* --- Encabezado Principal (Título y Botones) --- */
+/* Encabezado Principal */
 .bitacora-main-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1.5rem;
-    flex-shrink: 0; /* Evita que el encabezado se encoja */
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #dee2e6;
 }
 
 .bitacora-title {
-    font-size: 2rem;
-    font-weight: bold;
     color: #343a40;
+    font-size: 1.75rem;
+    font-weight: 600;
 }
 
-/* --- Contenedor de Botones (dentro del encabezado) --- */
-.actions-container {
-    display: flex;
-    gap: 1rem;
-}
+/* Contenedor de Acciones (Botones Editar/Guardar) */
+.actions-container {}
 
 .action-button {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 0.5rem;
     padding: 0.6rem 1.2rem;
-    border-radius: 0.375rem;
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: white;
+    border-radius: 6px;
     border: none;
     cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: background-color 0.2s, color 0.2s;
 }
-.action-button:disabled { opacity: 0.6; cursor: not-allowed; }
-.edit-button { background-color: #3b82f6; }
-.save-button { background-color: #16a34a; }
 
-/* --- Filtros --- */
+.action-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.edit-button {
+    background-color: #007bff;
+    color: white;
+}
+
+.edit-button:not(:disabled):hover {
+    background-color: #0056b3;
+}
+
+.save-button {
+    background-color: #28a745;
+    color: white;
+}
+
+.save-button:not(:disabled):hover {
+    background-color: #1e7e34;
+}
+
+/* Contenedor de Filtros */
 .filters-container {
     display: flex;
     gap: 1.5rem;
-    margin-bottom: 1rem;
-    flex-shrink: 0;
-}
-
-.filter-group { flex: 1; }
-.filter-label { font-weight: 500; color: #374151; }
-.filter-select { width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem; }
-
-/* --- Contenedor de la Tabla (para el scroll) --- */
-.table-container {
-    flex-grow: 1; /* Permite que la tabla ocupe el espacio restante */
-    overflow: auto; /* Habilita el scroll vertical y horizontal */
-    border: 1px solid #dee2e6;
-    border-radius: 0.5rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
     background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-/* --- Tabla Estilo Excel --- */
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.filter-label {
+    font-weight: 500;
+    color: #495057;
+}
+
+.filter-select {
+    padding: 0.5rem;
+    border-radius: 4px;
+    border: 1px solid #ced4da;
+    background-color: #fff;
+    font-size: 0.95rem;
+}
+
+/* Mensajes de Feedback */
+.feedback-message {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+.is-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.is-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Contenedor y Estilos de la Tabla */
+.table-container {
+    overflow-x: auto;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
 .threat-table {
     width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
+    border-collapse: collapse;
 }
 
 .threat-table th, .threat-table td {
-    border-bottom: 1px solid #dee2e6;
+    padding: 0.8rem 1rem;
     text-align: center;
+    border: 1px solid #e9ecef;
     vertical-align: middle;
 }
 
-/* Encabezado Fijo (Sticky) */
-.threat-table th {
+.threat-table thead th {
+    background-color: #e9ecef;
+    color: #495057;
+    font-weight: 600;
     position: sticky;
     top: 0;
-    z-index: 2;
-    background-color: #f1f3f5;
-    padding: 0.75rem 1rem;
-    font-weight: 600;
-    color: #495057;
-    border-right: 1px solid #dee2e6;
 }
-.threat-table th:last-child { border-right: none; }
 
-/* Celda de Día Fija (Sticky) */
+.threat-table tbody tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+.threat-table tbody tr:hover {
+    background-color: #e2e6ea;
+}
+
 .day-cell {
-    position: sticky;
-    left: 0;
-    z-index: 1;
-    background-color: #f1f3f5; /* Mismo color que el header */
     font-weight: 600;
-    padding: 0.5rem 1rem;
-    border-right: 1px solid #dee2e6;
+    background-color: #f8f9fa;
+    min-width: 60px;
 }
 
-/* Filas */
-.threat-table tbody tr:nth-child(even) .day-cell { background-color: #e9ecef; }
-.threat-table tbody tr:nth-child(even) td:not(.day-cell) { background-color: #f8f9fa; }
-.threat-table tbody tr:hover .day-cell, .threat-table tbody tr:hover td {
-    background-color: #dee2e6; /* Resaltado al pasar el ratón */
-}
-
-/* Inputs */
-.threat-table td { padding: 0; }
 .table-input {
-    width: 100%;
-    height: 100%;
-    border: 2px solid transparent;
-    background: transparent;
-    padding: 0.5rem 1rem;
+    width: 80px;
+    padding: 0.4rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
     text-align: center;
-    font-size: 0.9rem;
+    background-color: #fff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.table-input:disabled {
+    background-color: transparent;
+    border-color: transparent;
+    color: inherit;
+    cursor: default;
+}
+
+.table-input:focus:not(:disabled) {
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
     outline: none;
 }
-.table-input:disabled { cursor: not-allowed; }
-.table-input:not(:disabled):focus {
-    border-color: #007bff; /* Borde azul al editar */
+
+/* --- ESTILOS PARA TOTALES (NUEVO) --- */
+
+/* Encabezado de la columna de totales */
+.total-header-cell {
+    background-color: #d1ecf1 !important; /* Un azul claro */
+    font-weight: bold;
+    min-width: 100px;
 }
 
-/* Mensajes */
-.feedback-message, .loading-container { flex-shrink: 0; text-align: center; padding: 1rem; }
+/* Celdas de total por día */
+.total-cell {
+    background-color: #f1faff;
+    font-weight: bold;
+    color: #0c5460;
+}
+
+/* Fila de totales mensuales en el footer */
+.totals-row {
+    background-color: #d6d8db;
+    font-weight: bold;
+    color: #1b1e21;
+}
+
+.totals-row th, .totals-row td {
+    border-top: 2px solid #343a40;
+}
+
+/* Celda del gran total (esquina inferior derecha) */
+.grand-total-cell {
+    background-color: #c3e6cb; /* Un verde claro */
+    font-size: 1.1rem;
+    color: #155724;
+}
+
+.loading-container {
+    text-align: center;
+    padding: 3rem;
+    font-size: 1.2rem;
+    color: #6c757d;
+}
