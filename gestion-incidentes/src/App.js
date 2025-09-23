@@ -1,122 +1,67 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/navbar/navbar';
-import Dashboard from './components/dashboard/dashboard'; 
+import Dashboard from './components/dashboard/dashboard';
+import News from './components/news/news';
 import IncidentList from './components/incidents/IncidentList';
-import AddIncidentPage from './components/incidents/AddIncidentPage'; // Importar nuevo componente
-import EditIncidentPage from './components/incidents/EditIncidentPage'; // Importar nuevo componente
+import AddIncidentPage from './components/incidents/AddIncidentPage';
+import EditIncidentPage from './components/incidents/EditIncidentPage';
 import IncidentReport from './components/incidents/IncidentReport';
-import News from './components/news/news'; 
-import SavedNews from './components/news/SavedNews';
-import Bitacora from './components/BitacoraIncidentes/bitacora';
-import Inicio from './components/inicio/inicio';
 import BitacoraMensual from './components/BitacoraAmenazas/BitacoraMensual';
 import BitacoraReporte from './components/BitacoraAmenazas/BitacoraReporte';
-import BitacoraGraficas from './components/BitacoraGraficas/BitacoraGraficas'; // <-- RUTA CORREGIDA
-import './App.css'; // Importar el nuevo archivo CSS
+import BitacoraGraficas from './components/BitacoraGraficas/BitacoraGraficas';
+import Inicio from './components/inicio/inicio';
+import Bitacora from './components/BitacoraIncidentes/bitacora';
+import SavedNews from './components/news/SavedNews'; 
+import './App.css';
 
-const PrivateRoute = ({ children, isLoggedIn }) => {
-    return isLoggedIn ? children : <Navigate to="/" replace />;
-};
-
-const App = () => {
-    const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('isLoggedIn') === 'true');
-    const [isNavbarCollapsed, setIsNavbarCollapsed] = useState(false);
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const navigate = useNavigate();
-    
-    useEffect(() => {
-        if (!isLoggedIn && window.location.pathname !== '/') {
-            navigate('/', { replace: true });
-        }
-    }, [isLoggedIn, navigate]);
-
-    const handleLogin = () => {
-        setIsLoggedIn(true);
-        localStorage.setItem('isLoggedIn', 'true');
-        navigate('/dashboard');
-    };
+function App() {
+    const [isLoggedIn, setIsLoggedIn] = useState(true);
 
     const handleLogout = () => {
         setIsLoggedIn(false);
-        localStorage.removeItem('isLoggedIn');
-        navigate('/', { replace: true });
     };
 
-    const toggleNavbar = () => {
-        setIsNavbarCollapsed(!isNavbarCollapsed);
-        setIsMobileMenuOpen(false); // Cierra el menú móvil si se colapsa la barra lateral
-    };
-  
-    const toggleMobileMenu = () => {
-        setIsMobileMenuOpen(!isMobileMenuOpen);
-    };
-
-    const showNavbar = isLoggedIn && window.location.pathname !== '/';
+    // === LA CLAVE DEL ENRUTAMIENTO ===
+    // El `basename` le dice a React Router que la aplicación vive en la subcarpeta /gestion-sistema.
+    const basename = "/gestion-sistema";
 
     return (
-        <div className="app-container">
-            {showNavbar && (
-                <Navbar 
-                    onLogout={handleLogout} 
-                    isCollapsed={isNavbarCollapsed} 
-                    toggleNavbar={toggleNavbar} 
-                    isMobileMenuOpen={isMobileMenuOpen}
-                    setIsMobileMenuOpen={setIsMobileMenuOpen}
-                />
-            )}
-            <div className="content-wrapper">
-                {showNavbar && (
-                    <div className="mobile-header">
-                        <button onClick={toggleMobileMenu} className="mobile-menu-button">
-                            <svg className="mobile-menu-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M4 6H20M4 12H20M4 18H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                            </svg>
-                        </button>
-                    </div>
-                )}
-                <main className="main-content">
+        <Router basename={basename}>
+            <div className="app-container">
+                {isLoggedIn && <Navbar onLogout={handleLogout} />}
+                <div className="content-wrapper">
                     <Routes>
-                        <Route path="/" element={<Inicio onStart={handleLogin} />} />
-                        <Route path="/dashboard" element={<PrivateRoute isLoggedIn={isLoggedIn}><Dashboard /></PrivateRoute>} />
-                        <Route path="/bitacora-amenazas" element={<PrivateRoute isLoggedIn={isLoggedIn}><BitacoraMensual /></PrivateRoute>} />
-                        <Route path="/bitacora-amenazas/reporte" element={<PrivateRoute isLoggedIn={isLoggedIn}><BitacoraReporte /></PrivateRoute>} />
-                        <Route path="/bitacora-amenazas/graficas" element={<PrivateRoute isLoggedIn={isLoggedIn}><BitacoraGraficas /></PrivateRoute>} />
-                        <Route 
-                            path="/incidents" 
-                            element={
-                                <PrivateRoute isLoggedIn={isLoggedIn}>
-                                    <IncidentList />
-                                </PrivateRoute>
-                            } 
-                        />
-                        <Route 
-                            path="/incidents/add" 
-                            element={<PrivateRoute isLoggedIn={isLoggedIn}><AddIncidentPage /></PrivateRoute>} 
-                        />
-                        <Route 
-                            path="/incidents/edit/:id" 
-                            element={<PrivateRoute isLoggedIn={isLoggedIn}><EditIncidentPage /></PrivateRoute>} 
-                        />
-                        <Route 
-                            path="/incidents/report" 
-                            element={<PrivateRoute isLoggedIn={isLoggedIn}><IncidentReport /></PrivateRoute>} 
-                        />
-                        <Route path="/news" element={<PrivateRoute isLoggedIn={isLoggedIn}><News /></PrivateRoute>} /> 
-                        <Route path="/saved-news" element={<PrivateRoute isLoggedIn={isLoggedIn}><SavedNews /></PrivateRoute>} />
-                        <Route path="/bitacora/add" element={<PrivateRoute isLoggedIn={isLoggedIn}><Bitacora /></PrivateRoute>} />
-                        <Route path="*" element={<Navigate to="/" replace />} />
+                        <Route path="/" element={isLoggedIn ? <Navigate to="/inicio" /> : <Inicio onLogin={() => setIsLoggedIn(true)} />} />
+                        <Route path="/inicio" element={isLoggedIn ? <Dashboard /> : <Navigate to="/" />} />
+                        <Route path="/dashboard" element={isLoggedIn ? <Dashboard /> : <Navigate to="/" />} />
+                        <Route path="/noticias" element={isLoggedIn ? <News /> : <Navigate to="/" />} />
+                        <Route path="/noticias-guardadas" element={isLoggedIn ? <SavedNews /> : <Navigate to="/" />} />
+                        
+                        {/* Rutas para Incidentes */}
+                        <Route path="/incidentes" element={isLoggedIn ? <IncidentList /> : <Navigate to="/" />} />
+                        <Route path="/incidentes/nuevo" element={isLoggedIn ? <AddIncidentPage /> : <Navigate to="/" />} />
+                        <Route path="/incidentes/editar/:id" element={isLoggedIn ? <EditIncidentPage /> : <Navigate to="/" />} />
+                        <Route path="/incidentes/reporte" element={isLoggedIn ? <IncidentReport /> : <Navigate to="/" />} />
+                        
+                        {/* Rutas para Bitácora de Amenazas */}
+                        <Route path="/bitacora-amenazas/registro" element={isLoggedIn ? <BitacoraMensual /> : <Navigate to="/" />} />
+                        <Route path="/bitacora-amenazas/reporte" element={isLoggedIn ? <BitacoraReporte /> : <Navigate to="/" />} />
+
+                        {/* Rutas para Gráficas */}
+                        <Route path="/graficas" element={isLoggedIn ? <BitacoraGraficas /> : <Navigate to="/" />} />
+                        
+                        {/* Ruta para Bitácora de Incidentes (antigua) */}\
+                        <Route path="/bitacora" element={isLoggedIn ? <Bitacora /> : <Navigate to="/" />} />
+
+                        {/* Redirección por si se intenta acceder a una ruta inexistente */}
+                        <Route path="*" element={<Navigate to={isLoggedIn ? "/inicio" : "/"} />} />
                     </Routes>
-                </main>
+                </div>
             </div>
-        </div>
+        </Router>
     );
-};
+}
 
-const AppWrapper = () => (
-    <Router>
-        <App />
-    </Router>
-);
-
-export default AppWrapper;
+export default App;
