@@ -1,25 +1,16 @@
 <?php
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Authorization");
+// Incluir el archivo de configuración de la base de datos
+require_once 'config.php';
+
+// Cabeceras estándar para la API
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
 // Manejo de la solicitud pre-flight OPTIONS
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     http_response_code(204); // No Content
     exit();
-}
-
-// === Conexión a la Base de Datos ===
-$servername = "localhost";
-$username = "Gestion";
-$password = "";
-$dbname = "gestion_incidentes";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-if ($conn->connect_error) {
-    http_response_code(500);
-    die(json_encode(["success" => false, "message" => "Error de conexión a la base de datos: " . $conn->connect_error]));
 }
 
 // === Manejo de la Solicitud POST ===

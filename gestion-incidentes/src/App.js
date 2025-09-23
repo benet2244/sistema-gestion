@@ -1,62 +1,50 @@
-
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Navbar from './components/navbar/navbar';
-import Dashboard from './components/dashboard/dashboard';
-import News from './components/news/news';
-import IncidentList from './components/incidents/IncidentList';
-import AddIncidentPage from './components/incidents/AddIncidentPage';
-import EditIncidentPage from './components/incidents/EditIncidentPage';
-import IncidentReport from './components/incidents/IncidentReport';
-import BitacoraMensual from './components/BitacoraAmenazas/BitacoraMensual';
-import BitacoraReporte from './components/BitacoraAmenazas/BitacoraReporte';
-import BitacoraGraficas from './components/BitacoraGraficas/BitacoraGraficas';
-import Inicio from './components/inicio/inicio';
-import Bitacora from './components/BitacoraIncidentes/bitacora';
-import SavedNews from './components/news/SavedNews'; 
 import './App.css';
 
+// Rutas corregidas según la estructura de archivos real
+import Login from './components/inicio/inicio.js';
+import Navbar from './components/navbar/navbar.js';
+import Dashboard from './components/dashboard/dashboard.js';
+import IncidentForm from './components/incidents/IncidentForm.js';
+import ThreatLog from './components/BitacoraIncidentes/bitacora.js';
+import MonthlyLog from './components/BitacoraAmenazas/BitacoraMensual.js';
+import ThreatReport from './components/BitacoraAmenazas/BitacoraReporte.js';
+import Graficas from './components/BitacoraGraficas/BitacoraGraficas.js'; // <-- NUEVA IMPORTACIÓN
+import News from './components/news/news';
+import SavedNews from './components/news/SavedNews';
+
 function App() {
-    const [isLoggedIn, setIsLoggedIn] = useState(true);
+    const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('isLoggedIn') === 'true');
+
+    const handleLogin = () => {
+        localStorage.setItem('isLoggedIn', 'true');
+        setIsLoggedIn(true);
+    };
 
     const handleLogout = () => {
+        localStorage.removeItem('isLoggedIn');
         setIsLoggedIn(false);
     };
 
-    // === LA CLAVE DEL ENRUTAMIENTO ===
-    // El `basename` le dice a React Router que la aplicación vive en la subcarpeta /gestion-sistema.
-    const basename = "/gestion-sistema";
+    const basename = "/";
 
     return (
         <Router basename={basename}>
             <div className="app-container">
                 {isLoggedIn && <Navbar onLogout={handleLogout} />}
-                <div className="content-wrapper">
+                <div className={isLoggedIn ? "content-wrapper" : ""}>
                     <Routes>
-                        <Route path="/" element={isLoggedIn ? <Navigate to="/inicio" /> : <Inicio onLogin={() => setIsLoggedIn(true)} />} />
-                        <Route path="/inicio" element={isLoggedIn ? <Dashboard /> : <Navigate to="/" />} />
-                        <Route path="/dashboard" element={isLoggedIn ? <Dashboard /> : <Navigate to="/" />} />
-                        <Route path="/noticias" element={isLoggedIn ? <News /> : <Navigate to="/" />} />
-                        <Route path="/noticias-guardadas" element={isLoggedIn ? <SavedNews /> : <Navigate to="/" />} />
-                        
-                        {/* Rutas para Incidentes */}
-                        <Route path="/incidentes" element={isLoggedIn ? <IncidentList /> : <Navigate to="/" />} />
-                        <Route path="/incidentes/nuevo" element={isLoggedIn ? <AddIncidentPage /> : <Navigate to="/" />} />
-                        <Route path="/incidentes/editar/:id" element={isLoggedIn ? <EditIncidentPage /> : <Navigate to="/" />} />
-                        <Route path="/incidentes/reporte" element={isLoggedIn ? <IncidentReport /> : <Navigate to="/" />} />
-                        
-                        {/* Rutas para Bitácora de Amenazas */}
-                        <Route path="/bitacora-amenazas/registro" element={isLoggedIn ? <BitacoraMensual /> : <Navigate to="/" />} />
-                        <Route path="/bitacora-amenazas/reporte" element={isLoggedIn ? <BitacoraReporte /> : <Navigate to="/" />} />
-
-                        {/* Rutas para Gráficas */}
-                        <Route path="/graficas" element={isLoggedIn ? <BitacoraGraficas /> : <Navigate to="/" />} />
-                        
-                        {/* Ruta para Bitácora de Incidentes (antigua) */}\
-                        <Route path="/bitacora" element={isLoggedIn ? <Bitacora /> : <Navigate to="/" />} />
-
-                        {/* Redirección por si se intenta acceder a una ruta inexistente */}
-                        <Route path="*" element={<Navigate to={isLoggedIn ? "/inicio" : "/"} />} />
+                        <Route path="/login" element={isLoggedIn ? <Navigate to="/" /> : <Login onLogin={handleLogin} />} />
+                        <Route path="/" element={isLoggedIn ? <Dashboard /> : <Navigate to="/login" />} />
+                        <Route path="/registrar-incidente" element={isLoggedIn ? <IncidentForm /> : <Navigate to="/login" />} />
+                        <Route path="/bitacora-amenazas" element={isLoggedIn ? <ThreatLog /> : <Navigate to="/login" />} />
+                        <Route path="/bitacora-mensual" element={isLoggedIn ? <MonthlyLog /> : <Navigate to="/login" />} />
+                        <Route path="/reporte-bitacora" element={isLoggedIn ? <ThreatReport /> : <Navigate to="/login" />} />
+                        <Route path="/graficas" element={isLoggedIn ? <Graficas /> : <Navigate to="/login" />} /> {/* <-- NUEVA RUTA */}
+                        <Route path="/noticias" element={isLoggedIn ? <News /> : <Navigate to="/login" />} />
+                        <Route path="/noticias-guardadas" element={isLoggedIn ? <SavedNews /> : <Navigate to="/login" />} />
+                        <Route path="*" element={<Navigate to={isLoggedIn ? "/" : "/login"} />} />
                     </Routes>
                 </div>
             </div>

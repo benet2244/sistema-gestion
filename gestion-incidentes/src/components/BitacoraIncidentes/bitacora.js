@@ -3,6 +3,9 @@ import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import './bitacora.css';
 
+// Estandarización de la URL del backend
+const API_BASE_URL = 'http://localhost/gestion-incidentes/backend';
+
 const sections = [
   "1. Asignación del Flujo de Trabajo",
   "2. Rastreador del Flujo de Trabajo",
@@ -20,6 +23,7 @@ const sections = [
   "14. Consultas de Investigación",
 ];
 
+// ... (initial data definitions remain the same) ...
 const initialInvestigationQueriesData = [{ 'ID de consulta': '', 'Enviado por': '', 'Plataforma': '', 'Objetivo': '', 'Consulta': '', 'Notas': '' }];
 const initialForensicKeywordsData = [{ 'ID de palabra clave': '', 'Palabras clave forenses de alta fidelidad': '', 'Nota': '' }];
 const initialApplicationsData = [{ 'ID de la aplicación': '', 'Enviado por': '', 'Estado': '', 'Nombre de la aplicación': '', 'Nivel de aplicación': '', 'Rol de la aplicación': '', 'Grupo propietario': '', 'Líder inicial': '', 'Hallazgos': '', 'evidencia más temprana (UTC)': '', 'Última evidencia (UTC)': '', 'Fuente': '', 'Notas': '' }];
@@ -95,8 +99,8 @@ const Bitacora = () => {
         };
 
         try {
-            // --- URL CORREGIDA a HTTPS ---
-            const response = await fetch('https://192.168.39.115/gestion-incidentes/backend/api_amenaza.php', {
+            // Usando fetch y la URL estandarizada
+            const response = await fetch(`${API_BASE_URL}/api_amenaza.php`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -132,6 +136,7 @@ const Bitacora = () => {
         saveAs(new Blob([excelBuffer], { type: "application/octet-stream" }), `${amenazaTitle.replace(/ /g, "_")}.xlsx`);
     };
 
+    // ... (sectionComponentMap and render functions remain the same) ...
     const sectionComponentMap = {
         "1. Asignación del Flujo de Trabajo": { dataKey: 'asignacionFlujo', initialData: null },
         "2. Rastreador del Flujo de Trabajo": { dataKey: 'rastreadorFlujo', initialData: initialNotesData },

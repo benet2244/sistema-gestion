@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import './BitacoraReporte.css'; // Importar el nuevo archivo CSS
 
-const API_URL = 'https://192.168.39.115/gestion-incidentes/backend/reporte_bitacora.php';
+// Estandarización de la URL del backend
+const API_BASE_URL = 'http://localhost/gestion-incidentes/backend';
 
 const BitacoraReporte = () => {
     const [monthlyTotals, setMonthlyTotals] = useState({});
@@ -41,7 +42,8 @@ const BitacoraReporte = () => {
         setIsLoading(true);
         setMessage('');
         try {
-            const url = new URL(API_URL);
+            // Usando la URL estandarizada
+            const url = new URL(`${API_BASE_URL}/reporte_bitacora.php`);
             url.searchParams.append('mesInicio', mesInicio);
             url.searchParams.append('mesFin', mesFin);
             url.searchParams.append('year', year);
@@ -64,6 +66,7 @@ const BitacoraReporte = () => {
         }
     };
 
+    // ... (El resto del componente de renderizado no cambia)
     const labels = Object.keys(monthlyTotals);
     const maxTotal = labels.length > 0 ? Math.max(...labels.map(mes => threatTypes.reduce((sum, type) => sum + monthlyTotals[mes][type], 0))) : 0;
     

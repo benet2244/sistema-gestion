@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import './IncidentList.css'; // Importar el nuevo archivo CSS
+import './IncidentList.css'; // Estilos para la lista de incidentes
+
+// Estandarización de la URL del backend
+const API_BASE_URL = 'http://localhost/gestion-incidentes/backend';
 
 const IncidentList = () => {
     const [incidents, setIncidents] = useState([]);
@@ -17,9 +19,13 @@ const IncidentList = () => {
         setLoading(true);
         setError(null);
         try {
-            const response = await axios.get('https://192.168.39.115/gestion-incidentes/backend/incidentes.php');
-            // Asegurarnos de que siempre trabajamos con un array
-            setIncidents(Array.isArray(response.data) ? response.data : []);
+            // Usando fetch y la URL estandarizada
+            const response = await fetch(`${API_BASE_URL}/incidentes.php`);
+            if (!response.ok) {
+                throw new Error('La respuesta de la red no fue correcta');
+            }
+            const data = await response.json();
+            setIncidents(Array.isArray(data) ? data : []);
         } catch (err) {
             console.error("Error al cargar los incidentes:", err);
             setError("No se pudieron cargar los incidentes. Intenta de nuevo más tarde.");
@@ -29,15 +35,19 @@ const IncidentList = () => {
     };
 
     const onIncidentDeleted = async (id) => {
-        // Opcional: Confirmación antes de eliminar
-        // if (!window.confirm('¿Estás seguro de que quieres eliminar este incidente?')) {
-        //     return;
-        // }
+        if (!window.confirm('¿Estás seguro de que quieres eliminar este incidente?')) {
+            return;
+        }
 
         setError(null);
         try {
-            await axios.delete(`https://192.168.39.115/gestion-incidentes/backend/incidentes.php?id=${id}`);
-            // Actualizar el estado localmente para una respuesta más rápida
+            // Usando fetch para el método DELETE
+            const response = await fetch(`${API_BASE_URL}/incidentes.php?id=${id}`, {
+                method: 'DELETE'
+            });
+            if (!response.ok) {
+                throw new Error('Error al eliminar el incidente');
+            }
             setIncidents(prevIncidents => prevIncidents.filter(inc => inc.id !== id));
         } catch (err) {
             console.error("Error al eliminar el incidente:", err);
@@ -46,6 +56,7 @@ const IncidentList = () => {
     };
 
     const onIncidentEdit = (incident) => {
+        // La navegación ya es correcta, no necesita cambios
         navigate(`/incidents/edit/${incident.id}`);
     };
 

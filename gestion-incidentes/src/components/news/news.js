@@ -12,13 +12,17 @@ const News = () => {
     useEffect(() => {
         const fetchNews = async () => {
             setLoading(true);
+            setError(null); // Reset error state on new fetch
             try {
                 const proxyUrl = 'https://api.allorigins.win/get?url=';
                 const rssFeedUrl = 'https://thehackernews.com/feeds/posts/default';
                 const response = await fetch(`${proxyUrl}${encodeURIComponent(rssFeedUrl)}`);
+                
+                if (!response.ok) throw new Error(`Network response was not ok: ${response.statusText}`);
+
                 const data = await response.json();
                 
-                if (!data.contents) throw new Error("Failed to fetch news content.");
+                if (!data.contents) throw new Error("Failed to fetch news content from proxy.");
 
                 const parser = new DOMParser();
                 const xmlDoc = parser.parseFromString(data.contents, "text/xml");
@@ -39,7 +43,11 @@ const News = () => {
                 setCyberattacksNews(allNews.filter(item => /cyberattack|malware/i.test(item.title)));
                 setDataBreachNews(allNews.filter(item => /breach|data leak/i.test(item.title)));
 
-            } catch (err) { /* ... */ } finally { setLoading(false); }
+            } catch (err) {
+                setError(`Error al cargar las noticias: ${err.message}`);
+            } finally {
+                setLoading(false);
+            }
         };
         fetchNews();
     }, []);

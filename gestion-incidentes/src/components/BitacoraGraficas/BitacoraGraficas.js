@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { Bar, Doughnut } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend } from 'chart.js';
 import './BitacoraGraficas.css';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend);
+
+// Estandarización de la URL del backend
+const API_BASE_URL = 'http://localhost/gestion-incidentes/backend';
 
 const BitacoraGraficas = () => {
     const [filterType, setFilterType] = useState('year');
@@ -35,12 +37,18 @@ const BitacoraGraficas = () => {
         }
 
         try {
-            const response = await axios.get('https://192.168.39.115/gestion-incidentes/backend/graficas_bitacora.php', { params });
-            if (response.data.success && response.data.data) {
+            // Usando fetch y la URL estandarizada
+            const url = new URL(`${API_BASE_URL}/graficas_bitacora.php`);
+            Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
+
+            const response = await fetch(url);
+            const result = await response.json();
+
+            if (result.success && result.data) {
                 const safeData = {
-                    trend: response.data.data.trend || [],
-                    totals: response.data.data.totals || {},
-                    actorSummary: response.data.data.actorSummary || [],
+                    trend: result.data.trend || [],
+                    totals: result.data.totals || {},
+                    actorSummary: result.data.actorSummary || [],
                 };
                 setData(safeData);
                 if (safeData.trend.length === 0 && (!safeData.totals || Object.keys(safeData.totals).length === 0) && safeData.actorSummary.length === 0) {
@@ -48,7 +56,7 @@ const BitacoraGraficas = () => {
                 }
             } else {
                 setData({ trend: [], totals: {}, actorSummary: [] });
-                setMessage(response.data.message || "No se encontraron datos.");
+                setMessage(result.message || "No se encontraron datos.");
             }
         } catch (error) {
             console.error("Error al cargar datos:", error);
@@ -64,6 +72,7 @@ const BitacoraGraficas = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    // ... (El resto del componente de renderizado no cambia)
     const chartOptions = {
         responsive: true,
         plugins: { legend: { position: 'top' }, title: { display: true, text: 'Tendencia de Amenazas' } },
