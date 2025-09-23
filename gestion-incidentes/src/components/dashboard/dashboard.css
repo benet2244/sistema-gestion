@@ -1,251 +1,127 @@
-/* Estilos para el componente Dashboard */
+/* --- Estilos Generales del Dashboard --- */
+:root {
+    --main-bg-color: #f8f9fa;
+    --card-bg-color: #ffffff;
+    --text-primary: #212529;
+    --text-secondary: #6c757d;
+    --border-color: #dee2e6;
+    --shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
+    --blue: #3B82F6; --red: #EF4444; --green: #10B981; --yellow: #F59E0B; --purple: #8B5CF6;
+}
 
 .dashboard-container {
-  padding: 2rem;
-  background-color: #f3f4f6; /* bg-gray-100 */
-  min-height: 100vh;
+    padding: 2rem;
+    background-color: var(--main-bg-color);
+    color: var(--text-primary);
 }
 
 .dashboard-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
 }
 
 .dashboard-title {
-  font-size: 2.25rem; /* text-4xl */
-  font-weight: 700; /* font-bold */
-  color: #1f2937; /* text-gray-800 */
+    font-size: 1.75rem;
+    font-weight: 700;
 }
 
 .refresh-button {
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: white;
-  background-color: #2563eb; /* bg-blue-600 */
-  border-radius: 0.5rem;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.2s;
+    background-color: var(--blue);
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border-radius: 0.5rem;
+    border: none;
+    cursor: pointer; 
+    font-weight: 500;
+    transition: background-color 0.2s;
 }
+.refresh-button:hover { background-color: #2563eb; }
 
-.refresh-button:hover {
-  background-color: #1d4ed8; /* hover:bg-blue-700 */
-}
-
-/* Grid para las tarjetas y gráficos */
+/* --- Rejilla de KPIs --- */
 .stats-grid {
-  display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  gap: 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* 5 columnas */
+    gap: 1.5rem;
+    margin-bottom: 2rem;
 }
 
-.charts-grid {
-  display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  gap: 1.5rem;
-  margin-top: 2rem;
-}
-
-/* Media Queries para grids responsivas */
-@media (min-width: 768px) {
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 1024px) {
-  .stats-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-  .charts-grid {
-    grid-template-columns: repeat(2, 1fr); /* CORREGIDO: Rejilla simple de 2 columnas */
-  }
-}
-
-/* Estilos para las tarjetas de estadísticas */
 .dashboard-card {
-  background-color: white;
-  border-radius: 0.75rem; /* rounded-xl */
-  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); /* shadow-lg */
-  padding: 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-left: 4px solid;
+    background-color: var(--card-bg-color);
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    box-shadow: var(--shadow);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-left: 4px solid;
 }
 
-.card-content .card-title {
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: #6b7280; /* text-gray-500 */
+.border-blue { border-color: var(--blue); } .border-red { border-color: var(--red); } 
+.border-green { border-color: var(--green); } .border-yellow { border-color: var(--yellow); }
+.border-purple { border-color: var(--purple); }
+
+.card-title { font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase; margin: 0 0 0.5rem; }
+.card-value { font-size: 2rem; font-weight: 700; margin: 0; }
+.card-icon svg { height: 2rem; width: 2rem; color: #ced4da; }
+
+/* --- Contenedor Principal de Gráficas --- */
+.main-charts-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr; /* 60% para barras, 40% para dona */
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
 }
 
-.card-content .card-value {
-  font-size: 1.875rem; /* text-3xl */
-  font-weight: 800; /* font-extrabold */
-  color: #1f2937; /* text-gray-800 */
+.line-chart-container {
+    grid-column: 1 / -1; /* Ocupa todo el ancho de la rejilla */
 }
 
-.card-icon {
-  color: #d1d5db; /* text-gray-300 */
-}
-
-.card-icon svg {
-    height: 2.5rem; /* h-10 */
-    width: 2.5rem; /* w-10 */
-}
-
-/* Colores de borde específicos */
-.border-blue {
-  border-color: #3b82f6; 
-}
-.border-red {
-  border-color: #ef4444; 
-}
-.border-green {
-  border-color: #22c55e; 
-}
-
-
-/* Estilos para los contenedores de gráficos */
-.chart-container {
-  background-color: white;
-  border-radius: 0.75rem;
-  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
-  padding: 1.5rem;
-  height: 24rem; /* h-96 */
-  display: flex;
-  flex-direction: column;
+.chart-box {
+    background-color: var(--card-bg-color);
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
 }
 
 .chart-title {
-  font-size: 1.25rem; /* text-xl */
-  font-weight: 700;
-  color: #1f2937;
-  margin-bottom: 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
 }
 
-.chart-wrapper {
-    position: relative; 
+.chart-content-wrapper {
     flex-grow: 1;
+    position: relative;
+    height: 300px; /* Altura unificada para consistencia */
 }
 
-.chart-placeholder {
-    text-align: center;
-    color: #6b7280;
-    padding-top: 4rem; 
+.chart-placeholder { text-align: center; color: #9ca3af; padding-top: 5rem; }
+
+
+/* --- Responsive Design --- */
+@media (max-width: 1200px) {
+    .stats-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .main-charts-grid {
+        grid-template-columns: 1fr; /* Se apilan en pantallas medianas */
+    }
 }
 
-/* Estilos para la tabla de incidentes recientes */
-.recent-incidents-container {
-  background-color: white;
-  border-radius: 0.75rem;
-  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
-  margin-top: 2rem;
-  padding: 1.5rem;
-  overflow-x: auto;
+@media (max-width: 768px) {
+    .dashboard-container { padding: 1rem; }
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr); /* 2x2 en móviles */
+    }
 }
 
-.recent-incidents-title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #1f2937;
-  margin-bottom: 1rem;
-}
-
-.incidents-table {
-  width: 100%;
-  text-align: left;
-  border-collapse: collapse;
-}
-
-.incidents-table thead {
-  border-bottom: 2px solid #e5e7eb; 
-}
-
-.incidents-table th {
-  padding: 0.75rem;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #4b5563; 
-}
-
-.incidents-table tbody tr {
-  border-bottom: 1px solid #f3f4f6; 
-  transition: background-color 0.2s;
-}
-
-.incidents-table tbody tr:last-child {
-  border-bottom: none;
-}
-
-.incidents-table tbody tr:hover {
-  background-color: #f9fafb; 
-}
-
-.incidents-table td {
-  padding: 0.75rem;
-  font-size: 0.875rem;
-  color: #374151; 
-}
-
-/* Estilos para las "píldoras" de estado/prioridad */
-.status-pill {
-  display: inline-block;
-  padding: 0.25rem 0.5rem;
-  font-size: 0.75rem; /* text-xs */
-  font-weight: 600;
-  border-radius: 9999px; /* rounded-full */
-}
-
-.pill-high {
-  background-color: #fee2e2; 
-  color: #991b1b; 
-}
-
-.pill-medium {
-  background-color: #fef3c7; 
-  color: #92400e; 
-}
-
-.pill-low {
-  background-color: #dbeafe; 
-  color: #1e40af; 
-}
-
-.pill-clean {
-  background-color: #d1fae5; 
-  color: #065f46; 
-}
-
-.pill-infected {
-  background-color: #f3e8ff; 
-  color: #6b21a8; 
-}
-
-/* Mensajes de carga y error */
-.loading-message,
-.error-message {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  font-size: 1.25rem;
-  font-weight: 600;
-}
-
-.loading-message {
-  color: #4b5563;
-}
-
-.error-message {
-  padding: 2rem;
-  background-color: #fef2f2; 
-  color: #dc2626; 
-  border-radius: 0.5rem;
+@media (max-width: 576px) {
+    .stats-grid {
+        grid-template-columns: 1fr; /* 1 columna en pantallas muy pequeñas */
+    }
 }

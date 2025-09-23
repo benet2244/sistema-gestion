@@ -1,60 +1,20 @@
 
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import './navbar.css'; // Importamos el CSS
+import './navbar.css'; // Asegúrate que la ruta al CSS es correcta
 
-// --- Componentes de Iconos SVG --- //
-
-const IconDashboard = () => (
-    <svg className="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-    </svg>
-);
-
-const IconShield = () => (
-    <svg className="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 20.944a11.955 11.955 0 018.618-3.04A12.02 12.02 0 0021 20.944a11.955 11.955 0 01-2.382-9.016z"></path>
-    </svg>
-);
-
-const IconNewspaper = () => (
-    <svg className="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3h2m-4 3h2m-4 3h2m-4 3h2"></path>
-    </svg>
-);
-
-const IconClipboard = () => (
-    <svg className="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-    </svg>
-);
-
-const IconLogout = () => (
-    <svg className="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-    </svg>
-);
-
-const IconChevron = () => (
-    <svg className="submenu-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
-    </svg>
-);
-
-const IconMenu = () => (
-    <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path>
-    </svg>
-)
+// --- Iconos ---
+const IconLogout = () => <svg className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V5h10a1 1 0 100-2H4a1 1 0 00-1-1zm10.293 4.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 12H7a1 1 0 110-2h7.586l-1.293-1.293a1 1 0 010-1.414z" clipRule="evenodd" /></svg>;
+const IconUserCircle = () => <svg className="h-8 w-8 text-gray-400" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" /></svg>;
+const IconMenu = () => <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" /></svg>;
+const IconChevronDown = () => <svg className="h-4 w-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>;
 
 
-// --- Datos de Navegación con los nuevos iconos --- //
-
+// --- Datos de Navegación (CORREGIDOS) ---
 const navItems = [
-    { name: 'Dashboard', path: '/dashboard', icon: <IconDashboard /> },
+    { name: 'Dashboard', path: '/dashboard' },
     {
         name: 'Detecciones',
-        icon: <IconShield />,
         submenu: [
             { name: 'Listar Detecciones', path: '/incidents' },
             { name: 'Registrar Detección', path: '/incidents/add' },
@@ -63,110 +23,107 @@ const navItems = [
     },
     {
         name: 'Noticias',
-        icon: <IconNewspaper />,
         submenu: [
             { name: 'Noticias Recientes', path: '/news' },
             { name: 'Mis Noticias Guardadas', path: '/saved-news' },
         ],
     },
     {
-        name: 'Bitácora Incidentes',
-        icon: <IconClipboard />,
-        submenu: [
-            { name: 'Bitácora de Incidentes', path: '/bitacora/add' },
-        ],
+        name: 'Reporte de Incidentes',
+        path: '/bitacora/add'
     },
     {
-        name: 'Bitácora Amenazas',
-        icon: <IconClipboard />,
+        name: 'Amenazas Bloqueadas',
         submenu: [
             { name: 'Bitácora Mensual', path: '/bitacora-amenazas' },
-            { name: 'Generar Reporte', path: '/bitacora-amenazas/reporte' },
-            { name: 'Ver Gráficas', path: '/bitacora-amenazas/graficas' },
+            { name: 'Generar Reporte', path: '/bitacora-amenazas/reporte' }, // CORREGIDO
+            { name: 'Ver Gráficas', path: '/bitacora-amenazas/graficas' },   // CORREGIDO
         ],
     },
-    { name: 'Cerrar Sesión', path: '/', icon: <IconLogout /> },
 ];
 
+const Navbar = ({ onLogout }) => {
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [openSubmenu, setOpenSubmenu] = useState(null); // Para controlar submenús en móvil
 
-// --- Componente Navbar --- //
-
-const Navbar = ({ onLogout, isCollapsed, toggleNavbar, isMobileMenuOpen, setIsMobileMenuOpen }) => {
-    const [openMenu, setOpenMenu] = useState(null);
     const navigate = useNavigate();
 
-    const toggleSubmenu = (menuName) => {
-        setOpenMenu(openMenu === menuName ? null : menuName);
-    };
-    
     const handleLogoutClick = (e) => {
         e.preventDefault();
         onLogout();
+        navigate('/');
     };
 
+    // Para cerrar el menú móvil al hacer clic en un enlace
     const handleLinkClick = () => {
         if (isMobileMenuOpen) {
             setIsMobileMenuOpen(false);
         }
     };
     
-    const navbarClasses = `navbar ${isCollapsed ? 'collapsed' : ''} ${isMobileMenuOpen ? 'mobile-open' : ''}`;
-    const overlayClasses = `navbar-overlay ${isMobileMenuOpen ? 'visible' : ''}`;
+    // Para abrir/cerrar submenús en móvil
+    const handleSubmenuToggle = (itemName) => {
+        setOpenSubmenu(openSubmenu === itemName ? null : itemName);
+    };
 
     return (
-        <>
-            <div className={overlayClasses} onClick={() => setIsMobileMenuOpen(false)}></div>
-            <nav className={navbarClasses}>
-                <div className="navbar-header">
-                    <span className="navbar-brand">SOC</span>
-                    <button className="navbar-toggle" onClick={toggleNavbar}>
-                         <IconMenu />
-                    </button>
-                </div>
+        <nav className="navbar">
+            {/* Sección Izquierda: Logo y Toggle Móvil */}
+            <div className="navbar-left">
+                <Link to="/dashboard" className="navbar-brand">SOC</Link>
+            </div>
             
-                <div className="user-profile">
-                    <h2>Bienvenido,</h2>
-                    <p>SOC. Ciberdefensa</p>
-                    <span className="user-role">(Especialista)</span>
-                </div>
+            <div className="mobile-toggle" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+                <IconMenu />
+            </div>
 
-                <ul className="nav-list">
+            {/* Sección Central: Enlaces de Navegación */}
+            <div className={`navbar-center ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
+                <ul className={`nav-list ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
                     {navItems.map((item) => (
                         <li key={item.name} className="nav-item">
                             {item.submenu ? (
                                 <>
-                                    <div className="submenu-toggle" onClick={() => toggleSubmenu(item.name)}>
-                                        {item.icon}
-                                        <span className="nav-text">{item.name}</span>
-                                        <div className={`submenu-arrow ${openMenu === item.name ? 'open' : ''}`}>
-                                            <IconChevron />
-                                        </div>
+                                    <div className="submenu-toggle" onClick={() => handleSubmenuToggle(item.name)}>
+                                        <span>{item.name}</span>
+                                        <IconChevronDown />
                                     </div>
-                                    <ul className={`submenu ${openMenu === item.name ? 'open' : ''}`}>
+                                    <ul className={`submenu ${openSubmenu === item.name ? 'open' : ''}`}>
                                         {item.submenu.map((subitem) => (
-                                            <li key={subitem.name} onClick={handleLinkClick}>
-                                                <Link to={subitem.path} className="submenu-link">
+                                            <li key={subitem.name}>
+                                                <Link to={subitem.path} className="submenu-link" onClick={handleLinkClick}>
                                                     {subitem.name}
                                                 </Link>
                                             </li>
                                         ))}
                                     </ul>
-                                </> 
+                                </>
                             ) : (
-                                <Link 
-                                  to={item.path} 
-                                  className="nav-link" 
-                                  onClick={item.name === 'Cerrar Sesión' ? handleLogoutClick : handleLinkClick}
-                                >
-                                    {item.icon}
-                                    <span className="nav-text">{item.name}</span>
+                                <Link to={item.path} className="nav-link" onClick={handleLinkClick}>
+                                    {item.name}
                                 </Link>
                             )}
                         </li>
                     ))}
                 </ul>
-            </nav>
-        </>
+            </div>
+
+            {/* Sección Derecha: Perfil de Usuario y Logout */}
+            <div className="navbar-right">
+                <div className="user-profile-section">
+                    <div className="user-info">
+                        <IconUserCircle />
+                        <p>Menu</p>
+                    </div>
+                    <div className="logout-menu">
+                         <button onClick={handleLogoutClick} className="logout-button">
+                            <IconLogout />
+                            Cerrar Sesión
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
     );
 };
 

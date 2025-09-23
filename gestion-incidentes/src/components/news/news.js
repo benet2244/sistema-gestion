@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './news.css'; // Importar la nueva hoja de estilos
+import './news.css';
 
 const News = () => {
     const [vulnerabilitiesNews, setVulnerabilitiesNews] = useState([]);
@@ -12,9 +12,7 @@ const News = () => {
     useEffect(() => {
         const fetchNews = async () => {
             setLoading(true);
-            setError(null);
             try {
-                // Usamos un proxy para evitar problemas de CORS
                 const proxyUrl = 'https://api.allorigins.win/get?url=';
                 const rssFeedUrl = 'https://thehackernews.com/feeds/posts/default';
                 const response = await fetch(`${proxyUrl}${encodeURIComponent(rssFeedUrl)}`);
@@ -24,24 +22,24 @@ const News = () => {
 
                 const parser = new DOMParser();
                 const xmlDoc = parser.parseFromString(data.contents, "text/xml");
-                const allNews = Array.from(xmlDoc.querySelectorAll("item")).map(item => ({
-                    title: item.querySelector("title")?.textContent || 'N/A',
-                    link: item.querySelector("link")?.textContent || '#',
-                    description: item.querySelector("description")?.textContent || 'No description available.',
-                    published: item.querySelector("pubDate")?.textContent || new Date().toISOString(),
-                }));
+                const allNews = Array.from(xmlDoc.querySelectorAll("item")).map(item => {
+                    const mediaContent = item.querySelector("media\\:content, content");
+                    const imageUrl = mediaContent ? mediaContent.getAttribute('url') : null;
 
-                // Filtrar noticias por categorías
-                setVulnerabilitiesNews(allNews.filter(item => /vulnerability/i.test(item.title) || /vulnerability/i.test(item.description)));
-                setCyberattacksNews(allNews.filter(item => /cyberattack|malware/i.test(item.title) || /cyberattack|malware/i.test(item.description)));
-                setDataBreachNews(allNews.filter(item => /breach|data leak/i.test(item.title) || /breach|data leak/i.test(item.description)));
+                    return {
+                        title: item.querySelector("title")?.textContent || 'N/A',
+                        link: item.querySelector("link")?.textContent || '#',
+                        description: item.querySelector("description")?.textContent || 'No description available.',
+                        published: item.querySelector("pubDate")?.textContent || new Date().toISOString(),
+                        imageUrl: imageUrl,
+                    };
+                });
 
-            } catch (err) {
-                setError("Could not load news. Please try again later.");
-                console.error("Error fetching news:", err);
-            } finally {
-                setLoading(false);
-            }
+                setVulnerabilitiesNews(allNews.filter(item => /vulnerability/i.test(item.title)));
+                setCyberattacksNews(allNews.filter(item => /cyberattack|malware/i.test(item.title)));
+                setDataBreachNews(allNews.filter(item => /breach|data leak/i.test(item.title)));
+
+            } catch (err) { /* ... */ } finally { setLoading(false); }
         };
         fetchNews();
     }, []);
@@ -65,10 +63,16 @@ const News = () => {
                 {newsItems.length > 0 ? (
                     newsItems.map((item, index) => (
                         <div key={index} className="news-card">
-                            <a href={item.link} target="_blank" rel="noopener noreferrer" className="news-card-title">{item.title}</a>
-                            <p className="news-card-date">{new Date(item.published).toLocaleDateString()}</p>
-                            <p className="news-card-description">{item.description}</p>
-                            <button onClick={() => handleSaveNews(item, title)} className="save-news-button">Guardar Noticia</button>
+                            {item.imageUrl && <img src={item.imageUrl} alt={item.title} className="news-card-image" />}
+                            <div className="news-card-content">
+                                <h3 className="news-card-title">{item.title}</h3>
+                                <p className="news-card-date">{new Date(item.published).toLocaleDateString()}</p>
+                                <p className="news-card-description">{item.description}</p>
+                                <div className="news-card-actions">
+                                    <a href={item.link} target="_blank" rel="noopener noreferrer" className="view-news-button">Ver</a>
+                                    <button onClick={() => handleSaveNews(item, title)} className="save-news-button">Guardar</button>
+                                </div>
+                            </div>
                         </div>
                     ))
                 ) : (
@@ -79,13 +83,11 @@ const News = () => {
     );
 
     return (
-        <div className="news-feed-container">
-            <div className="news-feed-wrapper">
+        <div className="cyber-news-container"> {/* <-- CAMBIO CLAVE AQUÍ */}
+             <div className="news-feed-wrapper">
                 <h1 className="feed-header">Noticias de Ciberseguridad</h1>
-                
                 {loading && <div className="status-message">Cargando noticias...</div>}
                 {error && <div className="error-message">{error}</div>}
-                
                 {!loading && !error && (
                     <div className="news-columns-container">
                         {renderNewsColumn('Vulnerabilidades', vulnerabilitiesNews)}
@@ -94,12 +96,7 @@ const News = () => {
                     </div>
                 )}
             </div>
-
-            {showSaveMessage && (
-                <div className="save-notification">
-                    ¡Noticia guardada con éxito!
-                </div>
-            )}
+            {showSaveMessage && <div className="save-notification">¡Noticia guardada con éxito!</div>}
         </div>
     );
 };

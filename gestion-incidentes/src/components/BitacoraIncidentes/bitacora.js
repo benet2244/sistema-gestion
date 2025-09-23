@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
-import './bitacora.css'; // Importar la nueva hoja de estilos
+import './bitacora.css';
 
 const sections = [
   "1. Asignación del Flujo de Trabajo",
@@ -20,7 +20,6 @@ const sections = [
   "14. Consultas de Investigación",
 ];
 
-// Estructuras de datos iniciales
 const initialInvestigationQueriesData = [{ 'ID de consulta': '', 'Enviado por': '', 'Plataforma': '', 'Objetivo': '', 'Consulta': '', 'Notas': '' }];
 const initialForensicKeywordsData = [{ 'ID de palabra clave': '', 'Palabras clave forenses de alta fidelidad': '', 'Nota': '' }];
 const initialApplicationsData = [{ 'ID de la aplicación': '', 'Enviado por': '', 'Estado': '', 'Nombre de la aplicación': '', 'Nivel de aplicación': '', 'Rol de la aplicación': '', 'Grupo propietario': '', 'Líder inicial': '', 'Hallazgos': '', 'evidencia más temprana (UTC)': '', 'Última evidencia (UTC)': '', 'Fuente': '', 'Notas': '' }];
@@ -38,7 +37,6 @@ const initialAssignmentData = [
     { 'flujo de trabajo': 'Inteligencia', 'dirigir': '', 'respondedor #1': '', 'respondedor #2': '', 'respondedor #3': '', 'respondedor #4': '' },
     { 'flujo de trabajo': 'Impacto', 'dirigir': '', 'respondedor #1': '', 'respondedor #2': '', 'respondedor #3': '', 'respondedor #4': '' },
 ];
-
 const initialFormData = {
     cronologia: initialEventsData,
     sistemas: initialSystemsData,
@@ -56,16 +54,8 @@ const initialFormData = {
     inteligencia: initialRFIdata,
 };
 
-// Función para obtener la clase de estilo de la sección
 const getSectionClass = (section, activeSection) => {
-    const classMap = {
-        active: 'is-active',
-        workflow: 'is-workflow',
-        investigation: 'is-investigation',
-        intel: 'is-intel',
-        default: 'is-default'
-    };
-
+    const classMap = { active: 'is-active', workflow: 'is-workflow', investigation: 'is-investigation', intel: 'is-intel', default: 'is-default' };
     if (section === activeSection) return classMap.active;
     if (sections.indexOf(section) < 4) return classMap.workflow;
     if (sections.indexOf(section) < 10) return classMap.investigation;
@@ -73,13 +63,16 @@ const getSectionClass = (section, activeSection) => {
     return classMap.default;
 };
 
-
 const Bitacora = () => {
     const [activeSection, setActiveSection] = useState(sections[0]);
-    const [formData, setFormData] = useState(JSON.parse(JSON.stringify(initialFormData))); // Deep copy
+    const [formData, setFormData] = useState(JSON.parse(JSON.stringify(initialFormData)));
+    const [amenazaTitle, setAmenazaTitle] = useState('Nueva Amenaza');
+    const [leadInvestigator, setLeadInvestigator] = useState('');
 
     const handleClearForm = () => {
         setFormData(JSON.parse(JSON.stringify(initialFormData)));
+        setAmenazaTitle('Nueva Amenaza');
+        setLeadInvestigator('');
         setActiveSection(sections[0]);
     };
 
@@ -92,22 +85,51 @@ const Bitacora = () => {
     const addRow = (section, initialData) => {
         setFormData(prevData => ({ ...prevData, [section]: [...prevData[section], { ...initialData[0] }] }));
     };
+    
+    const handleSaveToDB = async () => {
+        const payload = {
+            title: amenazaTitle,
+            lead_investigator: leadInvestigator,
+            status: 'Abierto',
+            formData: formData
+        };
+
+        try {
+            // --- URL CORREGIDA a HTTPS ---
+            const response = await fetch('https://192.168.39.115/gestion-incidentes/backend/api_amenaza.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                alert(`¡Éxito! Amenaza guardada con ID: ${result.amenaza_id}`);
+                handleClearForm();
+            } else {
+                alert(`Error al guardar: ${result.message}`);
+            }
+        } catch (error) {
+            console.error("Error de conexión o en la API:", error);
+            alert("Hubo un error de conexión. Revisa la consola para más detalles.");
+        }
+    };
 
     const handleSaveExcel = () => {
         const workbook = XLSX.utils.book_new();
         Object.keys(formData).forEach(key => {
-            // Asegurarnos de que el dato es un array y tiene contenido
             if (Array.isArray(formData[key]) && formData[key].length > 0) {
-                // Mapear el nombre de la sección de forma segura
                 const sectionName = Object.keys(sectionComponentMap).find(name => sectionComponentMap[name].dataKey === key);
                 const sheetName = sectionName ? sectionName.substring(0, 31) : key.substring(0, 31);
-                
                 const worksheet = XLSX.utils.json_to_sheet(formData[key]);
                 XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
             }
         });
         const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
-        saveAs(new Blob([excelBuffer], { type: "application/octet-stream" }), "bitacora_investigacion.xlsx");
+        saveAs(new Blob([excelBuffer], { type: "application/octet-stream" }), `${amenazaTitle.replace(/ /g, "_")}.xlsx`);
     };
 
     const sectionComponentMap = {
@@ -130,9 +152,9 @@ const Bitacora = () => {
     const renderSectionContent = () => {
         const config = sectionComponentMap[activeSection];
         if (!config) return null;
-
         const data = formData[config.dataKey];
-        const headers = Object.keys(data[0] || {});
+        if (!data || data.length === 0) return <p>No hay datos para esta sección.</p>;
+        const headers = Object.keys(data[0]);
 
         return (
             <div className="table-wrapper">
@@ -174,33 +196,49 @@ const Bitacora = () => {
 
     return (
         <div className="bitacora-container">
-            {/* Barra lateral */}
-            <aside className="bitacora-sidebar">
-                <h1 className="sidebar-title">Bitácora Ciberdefensa</h1>
-                <nav className="sidebar-nav">
+            <main className="bitacora-content">
+                <h1 className="main-title">Bitácora de Ciberdefensa</h1>
+
+                <nav className="bitacora-tabs-container">
                     {sections.map((section) => (
                         <button
                             key={section}
                             onClick={() => setActiveSection(section)}
-                            className={`sidebar-button ${getSectionClass(section, activeSection)}`}
+                            className={`bitacora-tab ${getSectionClass(section, activeSection)}`}
                         >
                             {section}
                         </button>
                     ))}
                 </nav>
-            </aside>
 
-            {/* Contenido principal */}
-            <main className="bitacora-content">
                 <div className="content-card">
+                    <div className="amenaza-details-inputs">
+                         <input
+                            type="text"
+                            value={amenazaTitle}
+                            onChange={(e) => setAmenazaTitle(e.target.value)}
+                            placeholder="Título de la Amenaza"
+                            className="amenaza-title-input"
+                        />
+                        <input
+                            type="text"
+                            value={leadInvestigator}
+                            onChange={(e) => setLeadInvestigator(e.target.value)}
+                            placeholder="Investigador Principal"
+                            className="amenaza-lead-input"
+                        />
+                    </div>
                     <h2 className="section-title">{activeSection}</h2>
                     {renderSectionContent()}
                     <div className="main-actions">
-                        <button onClick={handleSaveExcel} className="action-button save-button">
-                            Guardar Bitácora (Excel)
+                        <button onClick={handleSaveToDB} className="action-button save-button">
+                            Guardar Amenaza en BD
+                        </button>
+                         <button onClick={handleSaveExcel} className="action-button excel-button">
+                            Exportar a Excel
                         </button>
                         <button onClick={handleClearForm} className="action-button clear-button">
-                            Limpiar Formularios
+                            Limpiar Formulario
                         </button>
                     </div>
                 </div>

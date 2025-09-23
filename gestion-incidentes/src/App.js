@@ -12,7 +12,7 @@ import Bitacora from './components/BitacoraIncidentes/bitacora';
 import Inicio from './components/inicio/inicio';
 import BitacoraMensual from './components/BitacoraAmenazas/BitacoraMensual';
 import BitacoraReporte from './components/BitacoraAmenazas/BitacoraReporte';
-import BitacoraGraficas from './components/BitacoraAmenazas/BitacoraGraficas';
+import BitacoraGraficas from './components/BitacoraGraficas/BitacoraGraficas'; // <-- RUTA CORREGIDA
 import './App.css'; // Importar el nuevo archivo CSS
 
 const PrivateRoute = ({ children, isLoggedIn }) => {
