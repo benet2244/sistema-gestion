@@ -1,14 +1,9 @@
 <?php
 
+
 const DB_HOST = 'localhost';
-
-
 const DB_USER = 'root';
-
-/** Tu contraseña para la base de datos */
 const DB_PASS = 'root';
-
-
 const DB_NAME = 'gestion_incidentes';
 
 
