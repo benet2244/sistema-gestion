@@ -1,25 +1,17 @@
 <?php
-/*
- * Archivo de Configuración de la Base de Datos
- *
- * Este script establece una conexión segura a la base de datos MySQL/MariaDB.
- */
 
-// ** Detalles de la Base de Datos ** //
-
-/** El nombre de host de tu servidor de base de datos (usualmente 'localhost' o una IP) */
 const DB_HOST = 'localhost';
 
-/** Tu nombre de usuario para la base de datos */
+
 const DB_USER = 'root';
 
 /** Tu contraseña para la base de datos */
 const DB_PASS = 'root';
 
-/** El nombre de la base de datos a la que te quieres conectar */
+
 const DB_NAME = 'gestion_incidentes';
 
-// --- No edites debajo de esta línea --- //
+
 
 /**
  * Función para establecer una conexión a la base de datos usando MySQLi.
