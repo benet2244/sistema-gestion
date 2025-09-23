@@ -1,4 +1,3 @@
-
 # Habilita el motor de reescritura de URLs
 RewriteEngine On
 

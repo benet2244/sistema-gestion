@@ -1,7 +1,7 @@
 import React from 'react';
 import './inicio.css'; // Importar el nuevo archivo CSS
 
-const Inicio = ({ onStart }) => (
+const Inicio = ({ onLogin }) => (
     <div className="inicio-container">
         <div className="inicio-card">
             {/* Panel izquierdo */}
@@ -10,7 +10,7 @@ const Inicio = ({ onStart }) => (
                 <p className="inicio-description">Monitoreo, detección y respuesta a incidentes de seguridad.</p>
                 <div className="inicio-button-container">
                     <button 
-                        onClick={onStart} 
+                        onClick={onLogin} 
                         className="inicio-button"
                     >
                         Iniciar Sistema
