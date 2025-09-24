@@ -1,94 +1,96 @@
-.dashboard-container {
-    padding: 2rem;
-    background-color: #f4f7f9;
+/* === Estilos Base === */
+body {
+    background-color: #eef3f7;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
-.dashboard-header {
-    text-align: center;
-    margin-bottom: 2rem;
+/* === Contenedor Principal del Dashboard === */
+.dashboard-container {
+    background-color: #ffffff;
+    margin: 20px;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .dashboard-header h1 {
-    font-size: 2em;
-    color: #1e1e2f;
-    margin-bottom: 0.5rem;
+    text-align: left;
+    font-size: 1.8rem;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 25px;
 }
 
-.dashboard-header p {
-    font-size: 1.1em;
-    color: #6e6e8c;
-}
-
-.stats-grid {
+/* === Contenedor de KPIs (Tarjetas Superiores) === */
+.kpi-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2rem;
+    gap: 20px;
+    margin-bottom: 30px;
 }
 
-.stat-card {
-    background-color: #ffffff;
-    padding: 1.5rem;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    text-align: center;
+.kpi-card {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
 }
 
-.stat-card h3 {
-    font-size: 1.1em;
-    color: #6e6e8c;
-    margin-bottom: 1rem;
+.kpi-icon {
+    font-size: 2.2rem;
+    margin-right: 20px;
+    color: #4a90e2;
 }
 
-.stat-card .stat-value {
-    font-size: 2em;
-    font-weight: 700;
-    color: #1e1e2f;
+.kpi-info h3 {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #6c757d;
+    font-weight: 500;
+    text-transform: uppercase;
 }
 
-.chart-container {
-    background-color: #ffffff;
-    padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    margin-bottom: 2rem;
-    height: 300px;
-}
-
-.recent-incidents-container {
-    background-color: #ffffff;
-    padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-}
-
-.recent-incidents-container h2 {
-    font-size: 1.5em;
-    color: #1e1e2f;
-    margin-bottom: 1.5rem;
-}
-
-.incidents-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.incidents-table th, .incidents-table td {
-    padding: 1rem;
-    text-align: left;
-    border-bottom: 1px solid #e0e0e0;
-}
-
-.incidents-table thead th {
-    background-color: #f9fafb;
+.kpi-info .value {
+    margin: 0;
+    font-size: 2.1rem;
     font-weight: 600;
-    color: #333;
+    color: #212529;
 }
 
-.incidents-table tbody tr:hover {
-    background-color: #f2f2f9;
+/* === Contenedor de Gráficos (Parrilla 2x2) === */
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
 }
 
-.incidents-table td {
-    color: #555;
+/* === Paneles de Gráficos Individuales === */
+.chart-panel {
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+    
+    /* --- LA CORRECCIÓN CLAVE --- */
+    position: relative; /* Necesario para que el gráfico se posicione bien dentro. */
+    height: 400px; /* Define una altura explícita para el contenedor del gráfico. */
+}
+
+.chart-panel h3 {
+    margin: 0 0 15px 0;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #495057;
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 10px;
+}
+
+/* Ajustes para pantallas más pequeñas */
+@media (max-width: 1200px) {
+    .charts-grid {
+        grid-template-columns: 1fr; /* Apilar en una sola columna en pantallas medianas/pequeñas */
+    }
 }

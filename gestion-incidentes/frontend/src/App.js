@@ -1,51 +1,47 @@
 import React, { useState } from 'react';
-import './App.css';
+import Login from './components/login/Login';
 import Navbar from './components/Navbar/Navbar';
-import Dashboard from './components/Dashboard/Dashboard';
-import DeteccionForm from './components/DeteccionForm/DeteccionForm';
 import DeteccionesView from './components/DeteccionesView/DeteccionesView';
-import Login from './components/Login/Login';
+import Dashboard from './components/Dashboard/Dashboard';
+import AmenazasView from './components/AmenazasView/AmenazasView'; // 1. Importar el nuevo componente
+import './App.css';
 
 function App() {
-    const [currentView, setCurrentView] = useState('login');
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [user, setUser] = useState(null);
+    const [currentPage, setCurrentPage] = useState('login');
 
-    const handleLoginSuccess = () => {
-        setIsAuthenticated(true);
-        setCurrentView('dashboard');
+    const handleLoginSuccess = (userData) => {
+        setUser(userData);
+        setCurrentPage('dashboard');
     };
 
-    const handleNavigate = (view) => {
-        if (isAuthenticated) {
-            setCurrentView(view);
-        }
+    const handleLogout = () => {
+        setUser(null);
+        setCurrentPage('login');
     };
 
-    const renderView = () => {
-        if (!isAuthenticated) {
-            return <Login onLoginSuccess={handleLoginSuccess} />;
-        }
-
-        switch (currentView) {
-            case 'dashboard':
-                return <Dashboard />;
-            case 'detecciones':
-                return <DeteccionesView />;
-            case 'formulario':
-                return <DeteccionForm />;
-            default:
-                return <Dashboard />;
-        }
+    const navigateTo = (page) => {
+        setCurrentPage(page);
     };
 
-    return (
-        <div className="App">
-            {isAuthenticated && <Navbar onNavigate={handleNavigate} />}
-            <main className="main-content">
-                {renderView()}
-            </main>
-        </div>
-    );
+    const renderPage = () => {
+        if (!user) {
+            return <Login onLoginSuccess={handleLoginSuccess} onNavigateToRegistro={() => navigateTo('registro')} />;
+        }
+
+        return (
+            <div className="app-container">
+                <Navbar onNavigate={navigateTo} user={user} onLogout={handleLogout} />
+                <main className="main-content">
+                    {currentPage === 'dashboard' && <Dashboard />}
+                    {currentPage === 'detecciones' && <DeteccionesView />}
+                    {currentPage === 'amenazas' && <AmenazasView />} {/* 2. Añadir la ruta de renderizado */}
+                </main>
+            </div>
+        );
+    };
+
+    return renderPage();
 }
 
 export default App;
