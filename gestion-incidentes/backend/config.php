@@ -1,9 +1,9 @@
 <?php
 
 
-const DB_HOST = 'localhost';
-const DB_USER = 'root';
-const DB_PASS = 'root';
+const DB_HOST = 'WIN-71NAU7K1HLR';
+const DB_USER = 'bd_sistema';
+const DB_PASS = 'B3n3t#722';
 const DB_NAME = 'gestion_incidentes';
 
 

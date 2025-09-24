@@ -11,7 +11,8 @@ const Login = ({ onLoginSuccess }) => {
         setError('');
 
         try {
-            const response = await fetch('http://localhost:8080/gestion-incidentes/backend/login.php', {
+            // Se cambia la URL a una ruta relativa para que funcione en cualquier servidor.
+            const response = await fetch('/backend/login.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
