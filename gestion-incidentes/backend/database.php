@@ -1,13 +1,13 @@
 <?php
-// gestion-incidentes/backend/config/database.php
+// gestion-incidentes/backend/database.php
 
 class Database {
     // Credenciales de la base de datos
     // DEBES REEMPLAZAR ESTOS VALORES con tus propias credenciales
     private $host = "localhost"; // o la IP de tu servidor de base de datos
     private $db_name = "gestion_incidentes_db";
-    private $username = "root";
-    private $password = "tu_contrasena";
+    private $username = "sistema";
+    private $password = "35iph7UhhXlUjRmR";
     public $conn;
 
     // Método para obtener la conexión a la base de datos

@@ -1,0 +1,85 @@
+.deteccion-container {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 20px;
+    background: #2b2e38; /* Fondo similar al de tu imagen */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    color: #f0f0f0;
+}
+
+.deteccion-container h2 {
+    text-align: center;
+    color: #ffffff;
+    margin-bottom: 25px;
+}
+
+.deteccion-form .form-group {
+    margin-bottom: 15px;
+}
+
+.deteccion-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.deteccion-form input[type="text"],
+.deteccion-form select,
+.deteccion-form textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #444;
+    border-radius: 4px;
+    background: #3a3d46;
+    color: #ffffff;
+    box-sizing: border-box; /* Asegura que padding no aumente el tamaño total */
+}
+
+.deteccion-form textarea {
+    resize: vertical;
+}
+
+.deteccion-form input:focus,
+.deteccion-form select:focus,
+.deteccion-form textarea:focus {
+    border-color: #5aa6e8;
+    outline: none;
+}
+
+.submit-btn {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #5aa6e8; /* Botón azul */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 20px;
+}
+
+.submit-btn:hover {
+    background-color: #438ac9;
+}
+
+/* Estilos para mensajes de estado */
+.message {
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.message.success {
+    background-color: #4CAF50; /* Verde */
+    color: white;
+}
+
+.message.error {
+    background-color: #f44336; /* Rojo */
+    color: white;
+}

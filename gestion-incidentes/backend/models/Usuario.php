@@ -2,58 +2,56 @@
 // gestion-incidentes/backend/models/Usuario.php
 
 class Usuario {
-    // Conexión a la base de datos y nombre de la tabla
     private $conn;
     private $table_name = "usuarios";
 
-    // Propiedades del objeto
     public $id;
     public $nombre_usuario;
     public $contrasena;
     public $rol;
 
-    // Constructor con la conexión a la base de datos
     public function __construct($db) {
         $this->conn = $db;
     }
 
-    // Método para buscar un usuario por nombre_usuario
-    // Esto será la base para nuestro login
     function buscarPorNombreUsuario() {
-        // Consulta para seleccionar un solo registro
         $query = "SELECT
-                    id, nombre_usuario, contrasena, rol
-                FROM
-                    " . $this->table_name . "
-                WHERE
-                    nombre_usuario = ?
-                LIMIT
-                    0,1";
+                      id, nombre_usuario, contrasena, rol
+                  FROM
+                      " . $this->table_name . "
+                  WHERE
+                      nombre_usuario = ?
+                  LIMIT
+                      0,1";
 
-        // Preparar la declaración de la consulta
         $stmt = $this->conn->prepare($query);
-
-        // Vincular el nombre de usuario
+        
+        // Manejo de errores de preparación
+        if ($stmt === false) {
+            error_log("Error de preparación de consulta: " . $this->conn->error);
+            return false;
+        }
+        
         $stmt->bind_param("s", $this->nombre_usuario);
 
-        // Ejecutar la consulta
-        $stmt->execute();
+        if (!$stmt->execute()) {
+             error_log("Error de ejecución de consulta: " . $stmt->error);
+             return false;
+        }
 
-        // Obtener el resultado
         $result = $stmt->get_result();
-        if ($result->num_rows > 0) {
-            // Obtener la fila encontrada
-            $row = $result->fetch_assoc();
 
-            // Establecer los valores a las propiedades del objeto
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
             $this->id = $row['id'];
             $this->nombre_usuario = $row['nombre_usuario'];
-            $this->contrasena = $row['contrasena']; // Esta es la contraseña hasheada de la BD
+            $this->contrasena = $row['contrasena'];
             $this->rol = $row['rol'];
-
+            $stmt->close();
             return true;
         }
 
+        $stmt->close();
         return false;
     }
 }

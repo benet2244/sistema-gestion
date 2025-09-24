@@ -1,56 +1,50 @@
 import React, { useState } from 'react';
-import axios from 'axios'; // Importar axios
+import axios from 'axios';
+import './login.css'; // ¡Importación del archivo CSS!
 
-const Login = () => {
+const Login = ({ onLoginSuccess }) => {
     const [nombreUsuario, setNombreUsuario] = useState('');
     const [contrasena, setContrasena] = useState('');
 
-    // Manejador para cuando se envía el formulario
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        // URL del endpoint de la API. 
-        // ¡ASEGÚRATE DE QUE ESTA URL SEA CORRECTA PARA TU SERVIDOR LOCAL!
-        const url = 'http://localhost/gestion-incidentes/backend/api/login.php';
+        const url = 'http://localhost/proyecto/sistema-gestion/gestion-incidentes/backend/login.php';
 
         try {
-            // Realizar la petición POST con axios
             const response = await axios.post(url, {
                 nombre_usuario: nombreUsuario,
                 contrasena: contrasena
             });
 
-            // El backend responde con un JSON. Mostramos el mensaje.
-            alert(response.data.mensaje);
+            const mensaje = response.data?.mensaje || "Inicio de sesión exitoso. Redirigiendo..."; 
+            alert(mensaje);
 
-            // Si el login es exitoso, podrías redirigir al usuario o guardar el rol
-            if (response.data.rol) {
+            if (response.data?.rol) {
                 console.log('Rol del usuario:', response.data.rol);
-                // Aquí podrías guardar el rol en el estado de la app o en el localStorage
+                // Llamar a la función para actualizar el estado en App.js
+                if (onLoginSuccess) {
+                    onLoginSuccess();
+                }
             }
 
         } catch (error) {
-            // Si axios lanza un error (ej. 401 No Autorizado, 404 No Encontrado)
             if (error.response) {
-                // El servidor respondió con un código de estado fuera del rango 2xx
-                alert(`Error: ${error.response.data.mensaje}`);
+                const serverMessage = error.response.data?.mensaje || 'Error en la respuesta del servidor.';
+                alert(`Error: ${serverMessage}`);
             } else if (error.request) {
-                // La petición se hizo pero no se recibió respuesta (ej. servidor caído)
                 alert('No se pudo conectar con el servidor. ¿Está el servidor Apache y MySQL corriendo?');
-                console.error('Error de petición:', error.request);
             } else {
-                // Algo más causó el error
                 alert('Ocurrió un error inesperado.');
-                console.error('Error:', error.message);
             }
         }
     };
 
     return (
-        <div>
-            <h2>Iniciar Sesión</h2>
-            <form onSubmit={handleSubmit}>
-                <div>
+        <div className="login-container"> {/* Clase para aplicar estilos */}
+            <h2 className="login-title">Iniciar Sesión</h2>
+            <form onSubmit={handleSubmit} className="login-form">
+                <div className="form-group">
                     <label>Nombre de Usuario:</label>
                     <input
                         type="text"
@@ -59,7 +53,7 @@ const Login = () => {
                         required
                     />
                 </div>
-                <div>
+                <div className="form-group">
                     <label>Contraseña:</label>
                     <input
                         type="password"
@@ -68,7 +62,7 @@ const Login = () => {
                         required
                     />
                 </div>
-                <button type="submit">Iniciar Sesión</button>
+                <button type="submit" className="login-button">Iniciar Sesión</button>
             </form>
         </div>
     );
