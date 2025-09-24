@@ -1,61 +1,88 @@
+
 .login-container {
-    max-width: 350px;
-    margin: 50px auto;
-    padding: 30px;
-    background: #2b2e38; /* Fondo de la tarjeta de login */
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-    color: #f0f0f0;
+    max-width: 380px;
+    margin: 5rem auto;
+    padding: 2.5rem;
+    background: #1e1e2f;
+    border-radius: 10px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+    color: #e0e0e0;
     text-align: center;
+    border: 1px solid #333;
 }
 
 .login-title {
     color: #ffffff;
-    margin-bottom: 25px;
-    font-size: 1.8em;
+    margin-bottom: 2rem;
+    font-size: 2em;
+    font-weight: 600;
 }
 
 .login-form .form-group {
-    margin-bottom: 15px;
+    margin-bottom: 1.5rem;
     text-align: left;
 }
 
 .login-form label {
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 0.5rem;
     font-weight: 500;
+    color: #a0a0a0;
 }
 
 .login-form input[type="text"],
 .login-form input[type="password"] {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     border: 1px solid #444;
-    border-radius: 4px;
-    background: #3a3d46;
+    border-radius: 5px;
+    background: #2a2a3a;
     color: #ffffff;
     box-sizing: border-box;
     font-size: 1em;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .login-form input:focus {
-    border-color: #5aa6e8;
+    border-color: #7f5af0;
     outline: none;
+    box-shadow: 0 0 5px rgba(127, 90, 240, 0.5);
 }
 
 .login-button {
     width: 100%;
-    padding: 12px;
-    background-color: #5aa6e8; /* Azul claro */
+    padding: 15px;
+    background-color: #7f5af0;
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 5px;
     font-size: 1.1em;
+    font-weight: 600;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    margin-top: 20px;
+    margin-top: 1rem;
 }
 
 .login-button:hover {
-    background-color: #438ac9;
+    background-color: #6a48d1;
+}
+
+.registro-link {
+    margin-top: 1.5rem;
+    font-size: 0.9em;
+    color: #a0a0a0;
+}
+
+.registro-link button {
+    background: none;
+    border: none;
+    color: #7f5af0; 
+    cursor: pointer;
+    font-weight: 600;
+    padding: 0;
+    font-size: 1em;
+}
+
+.registro-link button:hover {
+    text-decoration: underline;
 }
