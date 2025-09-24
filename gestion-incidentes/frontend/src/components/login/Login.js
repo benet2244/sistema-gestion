@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './login.css'; // ¡Importación del archivo CSS!
 
-const Login = ({ onLoginSuccess }) => {
+const Login = ({ onLoginSuccess, onNavigateToRegistro }) => {
     const [nombreUsuario, setNombreUsuario] = useState('');
     const [contrasena, setContrasena] = useState('');
 
@@ -22,7 +22,6 @@ const Login = ({ onLoginSuccess }) => {
 
             if (response.data?.rol) {
                 console.log('Rol del usuario:', response.data.rol);
-                // Llamar a la función para actualizar el estado en App.js
                 if (onLoginSuccess) {
                     onLoginSuccess();
                 }
@@ -41,7 +40,7 @@ const Login = ({ onLoginSuccess }) => {
     };
 
     return (
-        <div className="login-container"> {/* Clase para aplicar estilos */}
+        <div className="login-container"> 
             <h2 className="login-title">Iniciar Sesión</h2>
             <form onSubmit={handleSubmit} className="login-form">
                 <div className="form-group">
@@ -64,6 +63,9 @@ const Login = ({ onLoginSuccess }) => {
                 </div>
                 <button type="submit" className="login-button">Iniciar Sesión</button>
             </form>
+            <p className="registro-link">
+                ¿No tienes una cuenta? <button onClick={onNavigateToRegistro}>Regístrate aquí</button>
+            </p>
         </div>
     );
 };

@@ -7,7 +7,7 @@ include_once 'models/Usuario.php';
 
 // --- Configuración de CORS y Headers ---
 
-// ¡CORRECCIÓN! Se unifica el puerto a 3001 para el frontend
+// ¡CORRECCIÓN! Se unifica el puerto a 3000 para el frontend
 header("Access-Control-Allow-Origin: http://localhost:3000"); 
 
 header("Content-Type: application/json; charset=UTF-8");

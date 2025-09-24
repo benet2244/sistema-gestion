@@ -26,7 +26,6 @@ class Usuario {
 
         $stmt = $this->conn->prepare($query);
         
-        // Manejo de errores de preparación
         if ($stmt === false) {
             error_log("Error de preparación de consulta: " . $this->conn->error);
             return false;
@@ -51,6 +50,31 @@ class Usuario {
             return true;
         }
 
+        $stmt->close();
+        return false;
+    }
+
+    function crear() {
+        $query = "INSERT INTO " . $this->table_name . " (nombre_usuario, contrasena, rol) VALUES (?, ?, ?)";
+
+        $stmt = $this->conn->prepare($query);
+
+        if ($stmt === false) {
+            error_log("Error de preparación de consulta: " . $this->conn->error);
+            return false;
+        }
+
+        $this->nombre_usuario = htmlspecialchars(strip_tags($this->nombre_usuario));
+        $this->rol = htmlspecialchars(strip_tags($this->rol));
+
+        $stmt->bind_param("sss", $this->nombre_usuario, $this->contrasena, $this->rol);
+
+        if ($stmt->execute()) {
+            $stmt->close();
+            return true;
+        }
+
+        error_log("Error de ejecución de consulta: " . $stmt->error);
         $stmt->close();
         return false;
     }
