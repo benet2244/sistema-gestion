@@ -12,7 +12,7 @@ const Login = ({ onLoginSuccess }) => {
 
         try {
             // Se cambia la URL a una ruta relativa para que funcione en cualquier servidor.
-            const response = await fetch('/backend/login.php', {
+            const response = await fetch('https://192.168.39.115/gestion-incidentes/backend/login.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

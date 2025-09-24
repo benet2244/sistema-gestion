@@ -31,8 +31,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($result->num_rows === 1) {
         $user = $result->fetch_assoc();
 
-        // Verificar la contraseña con el hash almacenado
-        if (password_verify($password, $user['password_hash'])) {
+        // --- ADVERTENCIA DE SEGURIDAD ---
+        // La siguiente línea compara contraseñas en texto plano.
+        // Esto es extremadamente inseguro y solo debe usarse para depuración.
+        // La forma correcta y segura es: if (password_verify($password, $user['password_hash']))
+        if ($password === $user['password_hash']) {
             // Regenerar ID de sesión para prevenir fijación de sesión
             session_regenerate_id(true);
 
