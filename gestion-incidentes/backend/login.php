@@ -7,8 +7,8 @@ include_once 'models/Usuario.php';
 
 // --- Configuración de CORS y Headers ---
 
-// ¡CORRECCIÓN! Cambiar localhost:3000 por localhost:3001 para permitir el acceso al frontend
-header("Access-Control-Allow-Origin: http://localhost:3001"); 
+// ¡CORRECCIÓN! Se unifica el puerto a 3001 para el frontend
+header("Access-Control-Allow-Origin: http://localhost:3000"); 
 
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(array("mensaje" => "Error: Solamente se acepta el método POST."));
     exit();
 }
-// --- Fin Headers ---
+// --- Fin Headers --
 
 // Conexión a la base de datos
 $database = new Database();
@@ -49,15 +49,15 @@ if (empty($data->nombre_usuario) || empty($data->contrasena)) {
 // Inicializar objeto Usuario
 $usuario = new Usuario($db);
 
-// Asignar valores a las propiedades del objeto (solo el nombre_usuario se necesita para la búsqueda)
 $usuario->nombre_usuario = $data->nombre_usuario;
 $contrasena_plana = $data->contrasena; 
 
 // Buscar el usuario en la base de datos
 if ($usuario->buscarPorNombreUsuario()) {
     
-    // El usuario existe. Ahora verificamos la contraseña.
-    if ($usuario->contrasena === $contrasena_plana) { 
+    // El usuario existe. Ahora verificamos la contraseña usando password_verify.
+    // Esto compara la contraseña en texto plano del formulario con el hash de la BD.
+    if (password_verify($contrasena_plana, $usuario->contrasena)) { 
         
         // Login exitoso
         http_response_code(200);
@@ -79,3 +79,4 @@ if ($usuario->buscarPorNombreUsuario()) {
 }
 
 $db->close();
+?>
