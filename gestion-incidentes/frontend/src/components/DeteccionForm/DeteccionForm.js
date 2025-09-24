@@ -1,148 +1,105 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './DeteccionForm.css'; // Importa el archivo CSS
+import './DeteccionForm.css';
 
-const DeteccionForm = () => {
-    // Estado inicial del formulario
+const DeteccionForm = ({ onSuccess, initialData }) => {
     const [formData, setFormData] = useState({
+        id: '',
+        hostname: '',
         source_ip: '',
         target_ip: '',
-        hostname: '',
         detection_description: '',
-        severity: 'Baja', // Valor por defecto
+        severity: 'Baja',
+        estado: 'Abierta', // Valor por defecto
     });
 
-    const [message, setMessage] = useState('');
-    const [isSuccess, setIsSuccess] = useState(false);
+    const isEditMode = initialData && initialData.id;
 
-    // URL del endpoint de PHP para crear detecciones
-    const API_URL = 'http://localhost/proyecto/sistema-gestion/gestion-incidentes/backend/create_deteccion.php';
+    useEffect(() => {
+        if (isEditMode) {
+            setFormData({
+                id: initialData.id,
+                hostname: initialData.hostname, // Corregido de titulo a hostname
+                source_ip: initialData.source_ip || '',
+                target_ip: initialData.target_ip || '',
+                detection_description: initialData.descripcion,
+                severity: initialData.prioridad,
+                estado: initialData.estado || 'Abierta', // Cargar estado existente
+            });
+        }
+    }, [initialData, isEditMode]);
 
-    // Manejador genérico de cambios en los inputs
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prevData => ({
-            ...prevData,
-            [name]: value,
-        }));
+        setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    // Manejador de envío del formulario
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setMessage('Enviando detección...');
-        setIsSuccess(false);
+        const url = isEditMode 
+            ? 'http://localhost/proyecto/sistema-gestion/gestion-incidentes/backend/actualizar_deteccion.php' 
+            : 'http://localhost/proyecto/sistema-gestion/gestion-incidentes/backend/ingresar_deteccion.php';
 
         try {
-            const response = await axios.post(API_URL, formData);
-            
-            // Éxito: El servidor respondió con HTTP 200
-            setMessage(response.data.mensaje || 'Detección registrada con éxito.');
-            setIsSuccess(true);
-            
-            // Limpiar el formulario después del éxito
-            setFormData({
-                source_ip: '',
-                target_ip: '',
-                hostname: '',
-                detection_description: '',
-                severity: 'Baja',
-            });
-
-        } catch (error) {
-            // Error: El servidor respondió con 4xx o error de red
-            setIsSuccess(false);
-
-            if (error.response) {
-                // Error 400, 401, 500, etc.
-                setMessage(`Error: ${error.response.data?.mensaje || 'Error al registrar la detección.'}`);
-            } else if (error.request) {
-                // Error de red o CORS
-                setMessage('Error de conexión con el servidor. Verifica el estado del backend.');
+            const response = await axios.post(url, formData);
+            if (response.data.success) {
+                alert(`Detección ${isEditMode ? 'actualizada' : 'ingresada'} con éxito`);
+                if (onSuccess) onSuccess();
             } else {
-                setMessage('Ocurrió un error inesperado.');
+                alert(`Error al ${isEditMode ? 'actualizar' : 'ingresar'} la detección. Message: ${response.data.message}`);
             }
-            console.error(error);
+        } catch (error) {
+            console.error('Error en el formulario:', error);
+            alert('Hubo un problema de conexión.');
         }
     };
 
     return (
-        <div className="deteccion-container">
-            <h2>Registro de Detección de CrowdStrike</h2>
-            
-            {/* Mensaje de estado */}
-            {message && (
-                <div className={`message ${isSuccess ? 'success' : 'error'}`}>
-                    {message}
-                </div>
-            )}
-
+        <div className="deteccion-form-container">
+            <h2>{isEditMode ? 'Editar Detección' : 'Ingresar Nueva Detección'}</h2>
             <form onSubmit={handleSubmit} className="deteccion-form">
-                
                 <div className="form-group">
-                    <label htmlFor="source_ip">IP Origen:</label>
-                    <input
-                        type="text"
-                        name="source_ip"
-                        value={formData.source_ip}
-                        onChange={handleChange}
-                        required
-                        placeholder="Ej. 192.168.1.10"
-                    />
+                    <label>Hostname</label>
+                    <input type="text" name="hostname" value={formData.hostname} onChange={handleChange} required />
+                </div>
+
+                <div className="form-row">
+                    <div className="form-group">
+                        <label>IP Origen</label>
+                        <input type="text" name="source_ip" value={formData.source_ip} onChange={handleChange} />
+                    </div>
+                    <div className="form-group">
+                        <label>IP Destino</label>
+                        <input type="text" name="target_ip" value={formData.target_ip} onChange={handleChange} />
+                    </div>
+                </div>
+
+                <div className="form-row">
+                     <div className="form-group">
+                        <label>Severidad</label>
+                        <select name="severity" value={formData.severity} onChange={handleChange}>
+                            <option value="Baja">Baja</option>
+                            <option value="Media">Media</option>
+                            <option value="Alta">Alta</option>
+                            <option value="Crítica">Crítica</option>
+                        </select>
+                    </div>
+                    <div className="form-group">
+                        <label>Estado</label>
+                        <select name="estado" value={formData.estado} onChange={handleChange}>
+                            <option value="Abierta">Abierta</option>
+                            <option value="Pendiente">Pendiente</option>
+                            <option value="Cerrada">Cerrada</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div className="form-group">
-                    <label htmlFor="target_ip">IP Destino:</label>
-                    <input
-                        type="text"
-                        name="target_ip"
-                        value={formData.target_ip}
-                        onChange={handleChange}
-                        required
-                        placeholder="Ej. 10.0.0.5"
-                    />
+                    <label>Descripción de la Detección</label>
+                    <textarea name="detection_description" value={formData.detection_description} onChange={handleChange} required></textarea>
                 </div>
 
-                <div className="form-group">
-                    <label htmlFor="hostname">Hostname:</label>
-                    <input
-                        type="text"
-                        name="hostname"
-                        value={formData.hostname}
-                        onChange={handleChange}
-                        required
-                        placeholder="Ej. Servidor-Produccion-01"
-                    />
-                </div>
-
-                <div className="form-group">
-                    <label htmlFor="severity">Severidad:</label>
-                    <select
-                        name="severity"
-                        value={formData.severity}
-                        onChange={handleChange}
-                        required
-                    >
-                        <option value="Baja">Baja</option>
-                        <option value="Media">Media</option>
-                        <option value="Alta">Alta</option>
-                        <option value="Crítica">Crítica</option>
-                    </select>
-                </div>
-
-                <div className="form-group">
-                    <label htmlFor="detection_description">Descripción de la Detección:</label>
-                    <textarea
-                        name="detection_description"
-                        value={formData.detection_description}
-                        onChange={handleChange}
-                        required
-                        rows="4"
-                        placeholder="Detalle de la actividad o amenaza detectada."
-                    />
-                </div>
-
-                <button type="submit" className="submit-btn">Registrar Detección</button>
+                <button type="submit" className="submit-button">{isEditMode ? 'Actualizar' : 'Ingresar'}</button>
             </form>
         </div>
     );

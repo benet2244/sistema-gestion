@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './Registro.css';
 
-const Registro = ({ onRegistroSuccess }) => {
+const Registro = ({ onRegistroSuccess, onNavigateToLogin }) => {
     const [formData, setFormData] = useState({
         nombre_usuario: '',
         contrasena: '',
@@ -94,6 +94,9 @@ const Registro = ({ onRegistroSuccess }) => {
                 </div>
                 <button type="submit" className="submit-btn">Registrar</button>
             </form>
+            <p className="login-link">
+                ¿Ya tienes una cuenta? <button onClick={onNavigateToLogin}>Inicia Sesión</button>
+            </p>
         </div>
     );
 };

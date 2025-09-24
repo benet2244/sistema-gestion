@@ -1,106 +1,94 @@
 .dashboard-container {
-    max-width: 1400px;
-    margin: 40px auto;
-    padding: 20px;
-    color: #f0f0f0;
-    font-family: Arial, sans-serif;
+    padding: 2rem;
+    background-color: #f4f7f9;
 }
 
-.dashboard-container h2 {
+.dashboard-header {
     text-align: center;
-    color: #ffffff;
-    margin-bottom: 30px;
-    font-size: 1.5em;
-    font-weight: 500;
+    margin-bottom: 2rem;
 }
 
-.dashboard-grid {
-    display: flex;
-    gap: 20px;
-    margin-bottom: 20px;
-}
-
-/* Columna de Métricas */
-.metric-column {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    min-width: 250px;
-    max-width: 250px;
-}
-
-.metric-card {
-    background: #2b2e38; /* Fondo de tarjeta oscura */
-    padding: 25px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    text-align: center;
-    border-left: 5px solid #5aa6e8; /* Borde azul para destacar */
-}
-
-.metric-card .icon {
+.dashboard-header h1 {
     font-size: 2em;
-    margin-bottom: 5px;
+    color: #1e1e2f;
+    margin-bottom: 0.5rem;
 }
 
-.metric-card .value {
-    font-size: 2.5em;
-    font-weight: bold;
-    color: #5aa6e8; /* Color de valor */
+.dashboard-header p {
+    font-size: 1.1em;
+    color: #6e6e8c;
 }
 
-.metric-card .label {
-    font-size: 1em;
-    color: #ccc;
-    margin-top: 5px;
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
 }
 
-/* Área de Gráficos (Central y Derecha) */
-.chart-area {
-    display: flex;
-    flex: 1; /* Ocupa el espacio restante */
-    gap: 20px;
-}
-
-.chart-card {
-    flex: 1;
-    background: #2b2e38;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    min-height: 350px; /* Altura mínima para visualización */
-}
-
-.chart-card h3 {
-    color: #ffffff;
-    margin-bottom: 15px;
-    font-size: 1.2em;
-    border-bottom: 1px solid #444;
-    padding-bottom: 10px;
-}
-
-.chart-placeholder, .chart-placeholder-line {
+.stat-card {
+    background-color: #ffffff;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
     text-align: center;
-    padding-top: 50px;
-    color: #888;
-    background: #3a3d46;
-    border-radius: 4px;
-    height: 70%; 
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
-/* Gráfico de Tendencia Mensual (Abajo) */
-.trend-area {
-    margin-top: 20px;
+.stat-card h3 {
+    font-size: 1.1em;
+    color: #6e6e8c;
+    margin-bottom: 1rem;
 }
 
-.trend-chart {
-    min-height: 400px;
+.stat-card .stat-value {
+    font-size: 2em;
+    font-weight: 700;
+    color: #1e1e2f;
 }
 
-.chart-placeholder-line {
-    padding-top: 20px;
+.chart-container {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    margin-bottom: 2rem;
     height: 300px;
+}
+
+.recent-incidents-container {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.recent-incidents-container h2 {
+    font-size: 1.5em;
+    color: #1e1e2f;
+    margin-bottom: 1.5rem;
+}
+
+.incidents-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.incidents-table th, .incidents-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.incidents-table thead th {
+    background-color: #f9fafb;
+    font-weight: 600;
+    color: #333;
+}
+
+.incidents-table tbody tr:hover {
+    background-color: #f2f2f9;
+}
+
+.incidents-table td {
+    color: #555;
 }

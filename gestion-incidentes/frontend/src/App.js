@@ -1,55 +1,47 @@
 import React, { useState } from 'react';
 import './App.css';
-import Login from './components/login/Login';
+import Navbar from './components/Navbar/Navbar';
 import Dashboard from './components/Dashboard/Dashboard';
 import DeteccionForm from './components/DeteccionForm/DeteccionForm';
-import Registro from './components/Registro/Registro';
-
-const VIEW = {
-    LOGIN: 'login',
-    REGISTRO: 'registro',
-    DASHBOARD: 'dashboard',
-    DETECCION: 'deteccion',
-};
+import DeteccionesView from './components/DeteccionesView/DeteccionesView';
+import Login from './components/Login/Login';
 
 function App() {
-    const [currentView, setCurrentView] = useState(VIEW.LOGIN);
+    const [currentView, setCurrentView] = useState('login');
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
 
     const handleLoginSuccess = () => {
-        setCurrentView(VIEW.DASHBOARD);
+        setIsAuthenticated(true);
+        setCurrentView('dashboard');
     };
 
-    const handleRegistroSuccess = () => {
-        setCurrentView(VIEW.LOGIN);
-    };
-
-    const navigateToDeteccionForm = () => {
-        setCurrentView(VIEW.DETECCION);
-    };
-
-    const navigateToRegistro = () => {
-        setCurrentView(VIEW.REGISTRO);
+    const handleNavigate = (view) => {
+        if (isAuthenticated) {
+            setCurrentView(view);
+        }
     };
 
     const renderView = () => {
+        if (!isAuthenticated) {
+            return <Login onLoginSuccess={handleLoginSuccess} />;
+        }
+
         switch (currentView) {
-            case VIEW.LOGIN:
-                return <Login onLoginSuccess={handleLoginSuccess} onNavigateToRegistro={navigateToRegistro} />;
-            case VIEW.REGISTRO:
-                return <Registro onRegistroSuccess={handleRegistroSuccess} />;
-            case VIEW.DASHBOARD:
-                return <Dashboard onNavigateToDeteccion={navigateToDeteccionForm} />;
-            case VIEW.DETECCION:
-                return <DeteccionForm onNavigateToDashboard={() => setCurrentView(VIEW.DASHBOARD)} />;
+            case 'dashboard':
+                return <Dashboard />;
+            case 'detecciones':
+                return <DeteccionesView />;
+            case 'formulario':
+                return <DeteccionForm />;
             default:
-                return <Login onLoginSuccess={handleLoginSuccess} onNavigateToRegistro={navigateToRegistro} />;
+                return <Dashboard />;
         }
     };
 
     return (
         <div className="App">
-            <h1>Sistema de Gestión de Incidentes</h1>
-            <main>
+            {isAuthenticated && <Navbar onNavigate={handleNavigate} />}
+            <main className="main-content">
                 {renderView()}
             </main>
         </div>

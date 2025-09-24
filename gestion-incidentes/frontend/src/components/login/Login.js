@@ -1,71 +1,72 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import './login.css'; // ¡Importación del archivo CSS!
+import './Login.css';
 
 const Login = ({ onLoginSuccess, onNavigateToRegistro }) => {
-    const [nombreUsuario, setNombreUsuario] = useState('');
+    const [nombre_usuario, setNombreUsuario] = useState('');
     const [contrasena, setContrasena] = useState('');
+    const [message, setMessage] = useState({ type: '', text: '' });
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
+    const API_URL = 'http://localhost/proyecto/sistema-gestion/gestion-incidentes/backend/login.php';
 
-        const url = 'http://localhost/proyecto/sistema-gestion/gestion-incidentes/backend/login.php';
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        if (!nombre_usuario || !contrasena) {
+            setMessage({ type: 'error', text: 'Por favor, complete todos los campos.' });
+            return;
+        }
 
         try {
-            const response = await axios.post(url, {
-                nombre_usuario: nombreUsuario,
-                contrasena: contrasena
+            const response = await axios.post(API_URL, {
+                nombre_usuario,
+                contrasena
             });
 
-            const mensaje = response.data?.mensaje || "Inicio de sesión exitoso. Redirigiendo..."; 
-            alert(mensaje);
-
-            if (response.data?.rol) {
-                console.log('Rol del usuario:', response.data.rol);
-                if (onLoginSuccess) {
-                    onLoginSuccess();
-                }
-            }
-
-        } catch (error) {
-            if (error.response) {
-                const serverMessage = error.response.data?.mensaje || 'Error en la respuesta del servidor.';
-                alert(`Error: ${serverMessage}`);
-            } else if (error.request) {
-                alert('No se pudo conectar con el servidor. ¿Está el servidor Apache y MySQL corriendo?');
+            if (response.status === 200 && response.data.usuario) {
+                setMessage({ type: 'success', text: 'Login exitoso. Redirigiendo...' });
+                onLoginSuccess(response.data.usuario);
             } else {
-                alert('Ocurrió un error inesperado.');
+                throw new Error(response.data.mensaje || 'Error desconocido');
             }
+        } catch (error) {
+            const errorMsg = error.response ? error.response.data.mensaje : error.message;
+            setMessage({ type: 'error', text: `Error: ${errorMsg}` });
         }
     };
 
     return (
-        <div className="login-container"> 
-            <h2 className="login-title">Iniciar Sesión</h2>
+        <div className="login-container">
             <form onSubmit={handleSubmit} className="login-form">
+                <h2>Iniciar Sesión</h2>
+                {message.text && (
+                    <div className={`message ${message.type}`}>
+                        {message.text}
+                    </div>
+                )}
                 <div className="form-group">
-                    <label>Nombre de Usuario:</label>
-                    <input
-                        type="text"
-                        value={nombreUsuario}
-                        onChange={(e) => setNombreUsuario(e.target.value)}
-                        required
+                    <label>Usuario</label>
+                    <input 
+                        type="text" 
+                        value={nombre_usuario}
+                        onChange={(e) => setNombreUsuario(e.target.value)} 
+                        required 
                     />
                 </div>
                 <div className="form-group">
-                    <label>Contraseña:</label>
-                    <input
-                        type="password"
+                    <label>Contraseña</label>
+                    <input 
+                        type="password" 
                         value={contrasena}
-                        onChange={(e) => setContrasena(e.target.value)}
-                        required
+                        onChange={(e) => setContrasena(e.target.value)} 
+                        required 
                     />
                 </div>
-                <button type="submit" className="login-button">Iniciar Sesión</button>
+                <button type="submit" className="submit-btn">Acceder</button>
+                <div className="register-link">
+                    <p>¿No tienes una cuenta? <button type="button" onClick={onNavigateToRegistro}>Regístrate</button></p>
+                </div>
             </form>
-            <p className="registro-link">
-                ¿No tienes una cuenta? <button onClick={onNavigateToRegistro}>Regístrate aquí</button>
-            </p>
         </div>
     );
 };

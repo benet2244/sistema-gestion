@@ -8,7 +8,6 @@ CREATE TABLE usuarios (
 
 -- Podríamos añadir más tablas después, como 'incidentes', 'clientes', etc.
 
-
 -- Ejecutar en la base de datos 'gestion_incidentes_db'
 
 CREATE TABLE detecciones (
@@ -18,5 +17,6 @@ CREATE TABLE detecciones (
     hostname VARCHAR(255) NOT NULL,
     detection_description TEXT NOT NULL,
     severity ENUM('Baja', 'Media', 'Alta', 'Crítica') NOT NULL,
+    estado ENUM('Abierta', 'Pendiente', 'Cerrada') NOT NULL DEFAULT 'Abierta',
     fecha_registro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
