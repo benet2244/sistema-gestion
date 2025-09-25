@@ -1,129 +1,97 @@
 <?php
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+
 header("Access-Control-Allow-Origin: http://localhost:3001");
-header("Access-Control-Allow-Methods: POST, GET, PUT, DELETE, OPTIONS");
+header("Access-Control-Allow-Methods: POST, GET, PUT, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
-header("Access-Control-Allow-Credentials: true");
 header("Content-Type: application/json; charset=UTF-8");
 
-if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit();
 }
 
-include_once 'database.php';
+// PASO 1: INCLUIR LA CLASE Y CREAR LA CONEXIÓN
+require 'database.php'; // Carga la clase Database
 
 $database = new Database();
-$db = $database->getConnection();
+$db = $database->getConnection(); // Crea el objeto de conexión $db
 
-if ($db === null) {
-    http_response_code(503);
-    echo json_encode(["success" => false, "message" => "Error de conexión con la base de datos."]);
+// PASO 2: VERIFICAR LA CONEXIÓN INMEDIATAMENTE
+if ($db === null || $db->connect_error) {
+    http_response_code(500); // Internal Server Error
+    $error_message = 'Error Crítico: Falla al crear la conexión a la base de datos desde database.php.';
+    if ($db && $db->connect_error) {
+        $error_message .= ' Detalles: ' . $db->connect_error;
+    }
+    echo json_encode(['success' => false, 'message' => $error_message]);
     exit();
 }
 
-$method = $_SERVER['REQUEST_METHOD'];
+// Función de respuesta estandarizada
+function sendJsonResponse($success, $message = '') {
+    http_response_code($success ? 200 : 400);
+    echo json_encode(['success' => $success, 'message' => $message]);
+    exit();
+}
+
 $data = json_decode(file_get_contents("php://input"));
 
-function validate_data($data) {
-    return !empty($data->tipo_incidente) && !empty($data->fecha_incidente) && !empty($data->responsable);
+if (!is_object($data)) {
+    sendJsonResponse(false, 'Error: No se recibieron datos válidos en formato JSON.');
 }
 
-switch ($method) {
-    case 'POST': // Crear nuevo incidente
-        if (!validate_data($data)) {
-            http_response_code(400);
-            echo json_encode(["success" => false, "message" => "Datos incompletos. Por favor, complete los campos requeridos."]);
-            break;
-        }
+// --- EXTRACCIÓN SEGURA Y VALIDACIÓN ---
+$id = isset($_GET['id']) ? intval($_GET['id']) : null;
+$source_ip = $data->source_ip ?? null;
+$target_ip = $data->target_ip ?? null;
+$hostname = $data->hostname ?? null;
+$detection_description = $data->detection_description ?? null;
+$severity = $data->severity ?? 'Media';
+$estado = $data->estado ?? 'Abierta';
+$acciones_tomadas = $data->acciones_tomadas ?? null;
+$cantidad_detecciones = (isset($data->cantidad_detecciones) && is_numeric($data->cantidad_detecciones)) ? intval($data->cantidad_detecciones) : null;
+$dependencia = $data->dependencia ?? null;
+$detalles = $data->detalles ?? null;
+$direccion_mac = $data->direccion_mac ?? null;
+$equipo_afectado = $data->equipo_afectado ?? null;
+$estado_equipo = $data->estado_equipo ?? null;
+$fecha_incidente = $data->fecha_incidente ?? null;
+$hash_url = $data->hash_url ?? null;
+$nivel_amenaza = $data->nivel_amenaza ?? null;
+$responsable = $data->responsable ?? null;
+$tipo_incidente = $data->tipo_incidente ?? null;
 
-        $query = "INSERT INTO detecciones (hostname, source_ip, target_ip, detection_description, severity, estado, tipo_incidente, fecha_incidente, responsable, equipo_afectado, direccion_mac, dependencia, cantidad_detecciones, estado_equipo, acciones_tomadas, hash_url, nivel_amenaza, detalles) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+if (empty($tipo_incidente)) sendJsonResponse(false, "Error de validación: El campo 'Tipo de Incidente' es obligatorio.");
+if (empty($fecha_incidente)) sendJsonResponse(false, "Error de validación: El campo 'Fecha del Incidente' es obligatorio.");
+if (empty($responsable)) sendJsonResponse(false, "Error de validación: El campo 'Responsable' es obligatorio.");
+
+// --- LÓGICA DE BASE DE DATOS ---
+try {
+    if ($id) { // UPDATE
+        $query = "UPDATE detecciones SET source_ip=?, target_ip=?, hostname=?, detection_description=?, severity=?, estado=?, acciones_tomadas=?, cantidad_detecciones=?, dependencia=?, detalles=?, direccion_mac=?, equipo_afectado=?, estado_equipo=?, fecha_incidente=?, hash_url=?, nivel_amenaza=?, responsable=?, tipo_incidente=? WHERE id_deteccion=?";
         $stmt = $db->prepare($query);
-
-        // CORREGIDO: Se ajustó el string de tipos de `bind_param`
-        // El tipo para `dependencia` es `s` (string) y para `cantidad_detecciones` es `i` (integer)
-        $stmt->bind_param(
-            "ssssssssssssisssss",
-            $data->hostname ?? null,
-            $data->source_ip ?? null,
-            $data->target_ip ?? null,
-            $data->detection_description ?? null,
-            $data->severity ?? 'Media',
-            $data->estado ?? 'Nuevo',
-            $data->tipo_incidente,
-            $data->fecha_incidente,
-            $data->responsable,
-            $data->equipo_afectado ?? null,
-            $data->direccion_mac ?? null,
-            $data->dependencia ?? null,
-            $data->cantidad_detecciones ?? 0,
-            $data->estado_equipo ?? null,
-            $data->acciones_tomadas ?? null,
-            $data->hash_url ?? null,
-            $data->nivel_amenaza ?? null,
-            $data->detalles ?? null
-        );
-
-        if ($stmt->execute()) {
-            http_response_code(201);
-            echo json_encode(["success" => true, "message" => "Incidente registrado con éxito."]);
-        } else {
-            http_response_code(503);
-            echo json_encode(["success" => false, "message" => "No se pudo registrar el incidente: " . $stmt->error]);
-        }
-        $stmt->close();
-        break;
-
-    case 'PUT': // Actualizar incidente existente
-        $id = isset($_GET['id']) ? $_GET['id'] : die();
-
-        if (!validate_data($data)) {
-            http_response_code(400);
-            echo json_encode(["success" => false, "message" => "Datos incompletos para actualizar."]);
-            break;
-        }
-
-        $query = "UPDATE detecciones SET hostname=?, source_ip=?, target_ip=?, detection_description=?, severity=?, estado=?, tipo_incidente=?, fecha_incidente=?, responsable=?, equipo_afectado=?, direccion_mac=?, dependencia=?, cantidad_detecciones=?, estado_equipo=?, acciones_tomadas=?, hash_url=?, nivel_amenaza=?, detalles=? WHERE id_deteccion = ?";
+        if ($stmt === false) sendJsonResponse(false, 'Error Interno (DB Prepare - UPDATE): ' . $db->error);
+        $stmt->bind_param('sssssssissssssssssi', $source_ip, $target_ip, $hostname, $detection_description, $severity, $estado, $acciones_tomadas, $cantidad_detecciones, $dependencia, $detalles, $direccion_mac, $equipo_afectado, $estado_equipo, $fecha_incidente, $hash_url, $nivel_amenaza, $responsable, $tipo_incidente, $id);
+    } else { // INSERT
+        $query = "INSERT INTO detecciones (source_ip, target_ip, hostname, detection_description, severity, estado, acciones_tomadas, cantidad_detecciones, dependencia, detalles, direccion_mac, equipo_afectado, estado_equipo, fecha_incidente, hash_url, nivel_amenaza, responsable, tipo_incidente) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $db->prepare($query);
+        if ($stmt === false) sendJsonResponse(false, 'Error Interno (DB Prepare - INSERT): ' . $db->error);
+        $stmt->bind_param('sssssssissssssssss', $source_ip, $target_ip, $hostname, $detection_description, $severity, $estado, $acciones_tomadas, $cantidad_detecciones, $dependencia, $detalles, $direccion_mac, $equipo_afectado, $estado_equipo, $fecha_incidente, $hash_url, $nivel_amenaza, $responsable, $tipo_incidente);
+    }
 
-        // CORREGIDO: Se ajustó el string de tipos también para la actualización
-        $stmt->bind_param(
-            "ssssssssssssisssssi",
-            $data->hostname ?? null,
-            $data->source_ip ?? null,
-            $data->target_ip ?? null,
-            $data->detection_description ?? null,
-            $data->severity ?? 'Media',
-            $data->estado ?? 'Nuevo',
-            $data->tipo_incidente,
-            $data->fecha_incidente,
-            $data->responsable,
-            $data->equipo_afectado ?? null,
-            $data->direccion_mac ?? null,
-            $data->dependencia ?? null,
-            $data->cantidad_detecciones ?? 0,
-            $data->estado_equipo ?? null,
-            $data->acciones_tomadas ?? null,
-            $data->hash_url ?? null,
-            $data->nivel_amenaza ?? null,
-            $data->detalles ?? null,
-            $id
-        );
+    if ($stmt->execute()) {
+        $message = $id ? 'Incidente actualizado con éxito.' : 'Incidente guardado con éxito.';
+        sendJsonResponse(true, $message);
+    } else {
+        sendJsonResponse(false, 'Error al ejecutar la consulta: ' . $stmt->error);
+    }
 
-        if ($stmt->execute()) {
-            http_response_code(200);
-            echo json_encode(["success" => true, "message" => "Incidente actualizado con éxito."]);
-        } else {
-            http_response_code(503);
-            echo json_encode(["success" => false, "message" => "No se pudo actualizar el incidente: " . $stmt->error]);
-        }
-        $stmt->close();
-        break;
+    $stmt->close();
+    $db->close();
 
-    default:
-        http_response_code(405);
-        echo json_encode(["success" => false, "message" => "Método no permitido."]);
-        break;
+} catch (Throwable $e) {
+    sendJsonResponse(false, 'Excepción del servidor: ' . $e->getMessage());
 }
-
-$db->close();
 ?>
