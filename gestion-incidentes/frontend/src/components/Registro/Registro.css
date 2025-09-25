@@ -102,4 +102,10 @@
 
 .login-link button:hover {
     text-decoration: underline;
+    padding: 0;
+    font-size: 1em;
+}
+
+.login-link button:hover {
+    text-decoration: underline;
 }

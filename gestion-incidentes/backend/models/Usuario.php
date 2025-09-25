@@ -17,10 +17,14 @@ class Usuario {
         
         $stmt = $this->conn->prepare($query);
 
+        // Limpiar los datos
         $this->nombre_usuario = htmlspecialchars(strip_tags($this->nombre_usuario));
         $this->rol = htmlspecialchars(strip_tags($this->rol));
-        $this->contrasena = password_hash($this->contrasena, PASSWORD_BCRYPT);
+        // La contraseña YA viene hasheada desde crear_usuario.php
+        // NO VOLVER A HASHEAR AQUÍ. La siguiente línea es el error y la elimino.
+        // $this->contrasena = password_hash($this->contrasena, PASSWORD_BCRYPT); 
 
+        // Simplemente bindeamos la contraseña que ya está hasheada
         $stmt->bind_param("sss", $this->nombre_usuario, $this->contrasena, $this->rol);
 
         if ($stmt->execute()) {

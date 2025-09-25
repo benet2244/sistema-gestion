@@ -92,7 +92,8 @@ const Registro = ({ onRegistroSuccess, onNavigateToLogin }) => {
                         <option value="administrador">Administrador</option>
                     </select>
                 </div>
-                <button type="submit" className="submit-btn">Registrar</button>
+                {/* Clase unificada */}
+                <button type="submit" className="submit-button">Registrar</button>
             </form>
             <p className="login-link">
                 ¿Ya tienes una cuenta? <button onClick={onNavigateToLogin}>Inicia Sesión</button>

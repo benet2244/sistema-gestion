@@ -1,24 +1,32 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import DeteccionForm from '../DeteccionForm/DeteccionForm';
+import DeteccionDetails from '../DeteccionDetails/DeteccionDetails'; // 1. Importar el nuevo componente
 import './DeteccionesView.css';
 
 const DeteccionesView = () => {
+    // --- ESTADOS ---
     const [detecciones, setDetecciones] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
     const [isFormVisible, setIsFormVisible] = useState(false);
+    const [isDetailsVisible, setIsDetailsVisible] = useState(false); // Estado para el modal de detalles
     const [currentDeteccion, setCurrentDeteccion] = useState(null);
     const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
     const API_URL = 'http://localhost/proyecto/sistema-gestion/gestion-incidentes/backend/';
 
+    // --- OBTENCIÓN DE DATOS ---
     const fetchDetecciones = useCallback(async () => {
+        setIsLoading(true);
         try {
             const response = await axios.get(`${API_URL}obtener_detecciones.php?month=${selectedMonth}&year=${selectedYear}`);
             setDetecciones(response.data.registros || []);
         } catch (error) {
             console.error("Error al obtener las detecciones:", error);
             setDetecciones([]);
+        } finally {
+            setIsLoading(false);
         }
     }, [selectedMonth, selectedYear]);
 
@@ -26,6 +34,7 @@ const DeteccionesView = () => {
         fetchDetecciones();
     }, [fetchDetecciones]);
 
+    // --- MANEJO DE ACCIONES ---
     const handleAddClick = () => {
         setCurrentDeteccion(null);
         setIsFormVisible(true);
@@ -35,13 +44,18 @@ const DeteccionesView = () => {
         setCurrentDeteccion(deteccion);
         setIsFormVisible(true);
     };
+    
+    const handleDetailsClick = (deteccion) => {
+        setCurrentDeteccion(deteccion);
+        setIsDetailsVisible(true);
+    };
 
     const handleDeleteClick = async (id) => {
         if (window.confirm('¿Estás seguro de que deseas eliminar esta detección?')) {
             try {
                 const response = await axios.post(`${API_URL}eliminar_deteccion.php`, { id: id });
                 if (response.data.success) {
-                    fetchDetecciones(); // Recargar datos
+                    fetchDetecciones();
                 } else {
                     alert('Error al eliminar la detección: ' + response.data.message);
                 }
@@ -51,8 +65,7 @@ const DeteccionesView = () => {
             }
         }
     };
-    
-    // Esta función combina el cierre del formulario y la recarga de datos.
+
     const handleSaveSuccess = () => {
         fetchDetecciones();
         setIsFormVisible(false);
@@ -70,18 +83,30 @@ const DeteccionesView = () => {
     const years = Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i);
     const months = Array.from({ length: 12 }, (_, i) => ({ value: i + 1, name: new Date(0, i).toLocaleString('es-ES', { month: 'long' }) }));
 
+    // --- RENDERIZADO ---
     return (
         <div className="detecciones-view-container">
+            {/* --- MODAL FORMULARIO EDICIÓN/CREACIÓN --- */}
             {isFormVisible && (
                 <div className="modal-overlay">
                     <div className="modal-content">
                         <button className="close-button" onClick={() => setIsFormVisible(false)}>X</button>
-                        {/* CORRECCIÓN: Se pasan las props con los nombres correctos: onSave, onClose, y currentDeteccion */}
                         <DeteccionForm 
                             onSave={handleSaveSuccess} 
                             onClose={() => setIsFormVisible(false)}
                             currentDeteccion={currentDeteccion} 
                         />
+                    </div>
+                </div>
+            )}
+
+            {/* --- MODAL DETALLES --- */}
+            {isDetailsVisible && (
+                <div className="modal-overlay">
+                    {/* Un contenedor más grande para los detalles */}
+                    <div className="modal-content modal-content-details">
+                        <button className="close-button" onClick={() => setIsDetailsVisible(false)}>X</button>
+                        <DeteccionDetails detection={currentDeteccion} />
                     </div>
                 </div>
             )}
@@ -101,43 +126,47 @@ const DeteccionesView = () => {
                 </div>
             </div>
 
-            <table className="detecciones-table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Tipo Incidente</th>
-                        <th>IP Origen</th>
-                        <th>Responsable</th>
-                        <th>Severidad</th>
-                        <th>Estado</th>
-                        <th>Fecha Incidente</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {detecciones.length > 0 ? (
-                        detecciones.map(d => (
-                            <tr key={d.id_deteccion}>
-                                <td>{d.id_deteccion}</td>
-                                <td>{d.tipo_incidente}</td>
-                                <td>{d.source_ip}</td>
-                                <td>{d.responsable}</td>
-                                <td>{d.severity}</td>
-                                <td><span className={`status-badge ${getStatusClass(d.estado)}`}>{d.estado}</span></td>
-                                <td>{new Date(d.fecha_incidente).toLocaleDateString()}</td>
-                                <td className="actions-cell">
-                                    <button className="edit-button" onClick={() => handleEditClick(d)}>Editar</button>
-                                    <button className="delete-button" onClick={() => handleDeleteClick(d.id_deteccion)}>Eliminar</button>
-                                </td>
-                            </tr>
-                        ))
-                    ) : (
+            {isLoading ? <p>Cargando detecciones...</p> : (
+                <table className="detecciones-table">
+                    <thead>
                         <tr>
-                            <td colSpan="8">No se encontraron detecciones para el período seleccionado.</td>
+                            <th>ID</th>
+                            <th>Tipo Incidente</th>
+                            <th>IP Origen</th>
+                            <th>Responsable</th>
+                            <th>Severidad</th>
+                            <th>Estado</th>
+                            <th>Fecha Incidente</th>
+                            <th>Acciones</th>
                         </tr>
-                    )}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {detecciones.length > 0 ? (
+                            detecciones.map(d => (
+                                <tr key={d.id_deteccion}>
+                                    <td>{d.id_deteccion}</td>
+                                    <td>{d.tipo_incidente}</td>
+                                    <td>{d.source_ip}</td>
+                                    <td>{d.responsable}</td>
+                                    <td>{d.severity}</td>
+                                    <td><span className={`status-badge ${getStatusClass(d.estado)}`}>{d.estado}</span></td>
+                                    <td>{new Date(d.fecha_incidente).toLocaleDateString()}</td>
+                                    <td className="actions-cell">
+                                        {/* 3. Añadir el nuevo botón de detalles */}
+                                        <button className="details-button" onClick={() => handleDetailsClick(d)}>Detalles</button>
+                                        <button className="edit-button" onClick={() => handleEditClick(d)}>Editar</button>
+                                        <button className="delete-button" onClick={() => handleDeleteClick(d.id_deteccion)}>Eliminar</button>
+                                    </td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan="8">No se encontraron detecciones para el período seleccionado.</td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+            )}
         </div>
     );
 };

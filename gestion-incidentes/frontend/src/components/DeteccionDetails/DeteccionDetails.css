@@ -1,0 +1,141 @@
+/* Estilos para el contenedor principal de los detalles */
+.detection-details-container {
+    background-color: #f9f9f9;
+    padding: 25px;
+    border-radius: 8px;
+    max-height: 80vh; /* Límite de altura */
+    overflow-y: auto;   /* Scroll vertical si el contenido excede la altura */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.detection-details-container h3 {
+    color: #333;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 10px;
+    margin-top: 0;
+}
+
+/* Grid para organizar los campos principales */
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.detail-item {
+    background-color: #fff;
+    padding: 10px 15px;
+    border-radius: 5px;
+    border-left: 4px solid #007bff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.detail-label {
+    font-weight: 600;
+    color: #555;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.detail-value {
+    color: #333;
+}
+
+/* Secciones para descripciones y análisis */
+.details-section {
+    margin-top: 25px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+.details-section h4 {
+    color: #444;
+    margin-bottom: 15px;
+}
+
+.details-section p {
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 5px;
+    line-height: 1.6;
+}
+
+/* Estilos específicos para la sección de VirusTotal */
+.virustotal-details h4 {
+    color: #d32f2f; /* Rojo oscuro para el título de VirusTotal */
+}
+
+.virustotal-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.vt-stat {
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.9em;
+    color: #fff;
+}
+
+.vt-stat.malicious { background-color: #c62828; } /* Rojo */
+.vt-stat.suspicious { background-color: #f57f17; } /* Naranja */
+.vt-stat.harmless { background-color: #388e3c; }   /* Verde */
+.vt-stat.undetected { background-color: #546e7a; } /* Gris */
+
+.vt-malicious-list {
+    background-color: #fff;
+    border: 1px solid #ffebee; /* Borde rojo claro */
+    padding: 15px;
+    border-radius: 5px;
+}
+
+.vt-malicious-list h5 {
+    margin-top: 0;
+    color: #b71c1c;
+}
+
+.vt-malicious-list ul {
+    padding-left: 20px;
+    margin: 0;
+}
+
+.vt-malicious-list li {
+    margin-bottom: 5px;
+    font-size: 0.9em;
+}
+
+.vt-link {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 10px 15px;
+    background-color: #1976d2; /* Azul distintivo de VirusTotal */
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.vt-link:hover {
+    background-color: #1565c0;
+}
+
+/* Estilo para el texto plano en la sección de detalles */
+.raw-details-text {
+    background-color: #e9ecef; /* Un fondo gris claro para diferenciar */
+    padding: 15px;
+    border-radius: 5px;
+    white-space: pre-wrap; /* Respeta los saltos de línea y espacios */
+    word-wrap: break-word; /* Evita que el texto largo rompa el layout */
+    font-family: 'Courier New', Courier, monospace; /* Fuente monoespaciada para texto técnico */
+}
+
+/* Estilo para la sección del enlace a VT */
+.link-section {
+    text-align: center; /* Centra el botón */
+}
+.link-section .vt-link {
+    margin-top: 0; /* Quita el margen superior que tenía antes */
+}

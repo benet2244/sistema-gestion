@@ -47,3 +47,6 @@ CREATE TABLE `amenazas_diarias` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `fecha_unica` (`fecha`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+ALTER TABLE usuarios MODIFY contrasena VARCHAR(255) NOT NULL;

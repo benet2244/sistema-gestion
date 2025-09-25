@@ -6,12 +6,42 @@ const Navbar = ({ onNavigate, user, onLogout }) => {
         <nav className="navbar">
             <div className="navbar-left">
                 <div className="navbar-logo">
-                    <a onClick={() => onNavigate('dashboard')}>CiberSeg</a>
+                    <button
+                        type="button"
+                        className="navbar-logo-btn"
+                        onClick={() => onNavigate('dashboard')}
+                    >
+                        CiberSeg
+                    </button>
                 </div>
                 <ul className="navbar-links">
-                    <li><a onClick={() => onNavigate('dashboard')}>Dashboard</a></li>
-                    <li><a onClick={() => onNavigate('detecciones')}>Detecciones</a></li>
-                    <li><a onClick={() => onNavigate('amenazas')}>Amenazas</a></li> {/* Nuevo enlace */}
+                    <li>
+                        <button
+                            type="button"
+                            className="navbar-link-btn"
+                            onClick={() => onNavigate('dashboard')}
+                        >
+                            Dashboard
+                        </button>
+                    </li>
+                    <li>
+                        <button
+                            type="button"
+                            className="navbar-link-btn"
+                            onClick={() => onNavigate('detecciones')}
+                        >
+                            Detecciones
+                        </button>
+                    </li>
+                    <li>
+                        <button
+                            type="button"
+                            className="navbar-link-btn"
+                            onClick={() => onNavigate('amenazas')}
+                        >
+                            Amenazas
+                        </button>
+                    </li> {/* Nuevo enlace */}
                 </ul>
             </div>
 

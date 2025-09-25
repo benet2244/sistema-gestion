@@ -49,7 +49,7 @@
     box-shadow: 0 0 5px rgba(127, 90, 240, 0.5);
 }
 
-.login-button {
+.login-container .submit-button {
     width: 100%;
     padding: 15px;
     background-color: #7f5af0;
@@ -63,7 +63,7 @@
     margin-top: 1rem;
 }
 
-.login-button:hover {
+.login-container .submit-button:hover {
     background-color: #6a48d1;
 }
 

@@ -62,8 +62,8 @@ const Login = ({ onLoginSuccess, onNavigateToRegistro }) => {
                         required 
                     />
                 </div>
-                <button type="submit" className="submit-btn">Acceder</button>
-                <div className="register-link">
+                <button type="submit" className="login-button">Acceder</button>
+                <div className="registro-link">
                     <p>¿No tienes una cuenta? <button type="button" onClick={onNavigateToRegistro}>Regístrate</button></p>
                 </div>
             </form>

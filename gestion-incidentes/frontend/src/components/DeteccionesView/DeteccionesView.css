@@ -1,107 +1,116 @@
+/* Estilos para el contenedor principal de DeteccionesView */
 .detecciones-view-container {
-    padding: 2rem;
-    background-color: #f4f7f9;
+    padding: 20px;
+    background-color: #f4f7f6;
 }
 
+/* Estilos para la cabecera (Título y Controles) */
 .detecciones-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem;
+    margin-bottom: 20px;
 }
 
 .detecciones-header h1 {
-    font-size: 2em;
-    color: #1e1e2f;
+    color: #333;
+    font-size: 1.8em;
+}
+
+.header-controls {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.filter-controls {
+    display: flex;
+    gap: 10px;
+}
+
+.filter-controls select {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: white;
 }
 
 .add-button {
-    background-color: #7f5af0;
+    padding: 10px 15px;
+    background-color: #6a1b9a; /* Morado oscuro */
     color: white;
     border: none;
-    padding: 0.8rem 1.5rem;
-    border-radius: 5px;
+    border-radius: 4px;
     cursor: pointer;
-    font-size: 1em;
-    transition: background-color 0.3s;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
 }
 
 .add-button:hover {
-    background-color: #6a48d7;
+    background-color: #4a148c;
 }
 
+/* Estilos de la Tabla */
 .detecciones-table {
     width: 100%;
-    background-color: #ffffff;
     border-collapse: collapse;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    border-radius: 10px;
-    overflow: hidden;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .detecciones-table th, .detecciones-table td {
-    padding: 1rem;
+    padding: 12px 15px;
+    border-bottom: 1px solid #ddd;
     text-align: left;
-    border-bottom: 1px solid #e0e0e0;
 }
 
-.detecciones-table thead th {
-    background-color: #f9fafb;
+.detecciones-table th {
+    background-color: #f2f2f2;
+    color: #555;
     font-weight: 600;
-    color: #333;
 }
 
 .detecciones-table tbody tr:hover {
-    background-color: #f2f2f9;
+    background-color: #f9f9f9;
 }
 
-.actions-cell {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.edit-button, .delete-button {
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 0.9em;
-}
-
-.edit-button {
-    background-color: #2196F3;
-    color: white;
-}
-
-.delete-button {
-    background-color: #f44336;
-    color: white;
-}
-
-/* Status Badge Styles */
+/* Badges de Estado */
 .status-badge {
-    padding: 0.3em 0.8em;
-    border-radius: 15px;
+    padding: 4px 8px;
+    border-radius: 12px;
     color: white;
     font-size: 0.85em;
-    font-weight: 500;
-    text-transform: capitalize;
+    font-weight: 600;
 }
 
-.status-abierta {
-    background-color: #4CAF50; /* Verde */
+.status-abierta { background-color: #4CAF50; } /* Verde */
+.status-pendiente { background-color: #FFC107; } /* Amarillo */
+.status-cerrada { background-color: #607D8B; } /* Gris */
+
+/* Celda de Acciones y Botones */
+.actions-cell {
+    display: flex;
+    gap: 8px;
 }
 
-.status-pendiente {
-    background-color: #FFC107; /* Ámbar */
+.actions-cell button {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
 }
 
-.status-cerrada {
-    background-color: #607D8B; /* Gris */
+.actions-cell button:hover {
+    opacity: 0.85;
 }
 
+.edit-button { background-color: #0288d1; } /* Azul */
+.delete-button { background-color: #d32f2f; } /* Rojo */
+.details-button { background-color: #0097a7; } /* Cian */
 
-/* Modal Styles */
+/* Estilos para el Modal (Overlay y Contenido) */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -110,28 +119,35 @@
     bottom: 0;
     background-color: rgba(0, 0, 0, 0.6);
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
     z-index: 1000;
 }
 
 .modal-content {
-    background-color: #ffffff;
-    padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
     position: relative;
     width: 90%;
-    max-width: 500px;
+    max-width: 600px; /* Ancho para el formulario de edición */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.modal-content-details {
+    max-width: 900px; /* Ancho mayor para el modal de detalles */
 }
 
 .close-button {
     position: absolute;
-    top: 1rem;
-    right: 1rem;
-    background: none;
+    top: 10px;
+    right: 10px;
+    background: transparent;
     border: none;
-    font-size: 1.5rem;
+    font-size: 1.5em;
     cursor: pointer;
     color: #888;
+}
+.close-button:hover {
+    color: #333;
 }
