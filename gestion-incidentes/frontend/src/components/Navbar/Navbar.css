@@ -1,53 +1,79 @@
+/* Estructura general de la barra de navegación */
 .navbar {
-    background-color: #2c3e50; /* Un color azul oscuro/grisáceo */
+    background-color: #2c3e50; /* Mantenemos el color de fondo original */
     color: white;
-    padding: 15px 30px;
+    padding: 0 30px; /* Eliminamos el padding vertical para un control preciso */
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    height: 65px; /* Altura fija para un look más limpio */
 }
 
-.navbar-left {
+.navbar-left, .navbar-right, .navbar-links {
     display: flex;
     align-items: center;
+    height: 100%; /* Aseguramos que todos los contenedores llenen la altura */
 }
 
-.navbar-logo a {
+/* --- Estilos para el Logo --- */
+.navbar-logo {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    margin-right: 25px; /* Espacio entre el logo y los enlaces de navegación */
+}
+
+/* Espacio reservado para la imagen del logo */
+.navbar-logo-img {
+    height: 35px; /* Ajusta la altura según tu logo */
+    width: auto;
+    margin-right: 10px; /* Espacio entre la imagen y el texto 'CiberSeg' */
+}
+
+/* --- Estilos para los Botones y Enlaces --- */
+
+/* Estilo base para TODOS los botones de navegación para resetearlos */
+.navbar .navbar-logo-btn,
+.navbar .navbar-link-btn {
+    background: none;
+    border: none;
+    color: #bdc3c7; /* Un blanco más suave para los enlaces */
+    cursor: pointer;
+    font-size: 16px;
+    font-family: inherit; /* Usa la misma fuente que el resto de la página */
+    padding: 0 18px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Estilo específico para el texto del logo 'CiberSeg' */
+.navbar .navbar-logo-btn {
     font-size: 24px;
     font-weight: bold;
-    color: #ecf0f1; /* Un blanco más suave */
-    text-decoration: none;
-    cursor: pointer;
+    color: #ecf0f1; /* Blanco más brillante para la marca */
+    padding: 0; /* Quitamos el padding para que no se separe de la imagen */
+}
+
+/* Efecto hover para los enlaces de navegación (Dashboard, Detecciones, etc.) */
+.navbar .navbar-link-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1); /* Un fondo sutil al pasar el ratón */
+    color: #ffffff; /* Texto totalmente blanco al pasar el ratón */
 }
 
 .navbar-links {
     list-style: none;
-    margin: 0 0 0 25px; /* Margen a la izquierda del logo */
+    margin: 0;
     padding: 0;
-    display: flex;
 }
 
 .navbar-links li {
-    margin-right: 20px;
+    margin: 0; /* Quitamos el margen, el espaciado lo da el padding del botón */
 }
 
-.navbar-links a {
-    color: #bdc3c7; /* Un gris claro para los enlaces */
-    text-decoration: none;
-    font-size: 16px;
-    cursor: pointer;
-    transition: color 0.3s ease;
-}
-
-.navbar-links a:hover, .navbar-links a.active {
-    color: #ffffff; /* Blanco brillante al pasar el mouse o si está activo */
-}
-
-.navbar-right {
-    display: flex;
-    align-items: center;
-}
+/* --- Estilos para la sección de Usuario y Logout --- */
 
 .user-details {
     display: flex;
@@ -64,21 +90,22 @@
 
 .user-role {
     font-size: 13px;
-    color: #95a5a6; /* Un gris más oscuro para el rol */
+    color: #95a5a6;
 }
 
 .logout-btn {
-    background-color: #e74c3c; /* Rojo para acciones de salida/peligro */
+    background-color: #e74c3c; /* Rojo para la acción de cerrar sesión */
     color: white;
     border: none;
-    padding: 8px 15px;
+    padding: 10px 18px;
     border-radius: 5px;
     cursor: pointer;
     font-size: 14px;
     font-weight: bold;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .logout-btn:hover {
-    background-color: #c0392b; /* Rojo más oscuro al pasar el mouse */
+    background-color: #c0392b; /* Rojo más oscuro al pasar el ratón */
+    transform: scale(1.05); /* Efecto de crecimiento sutil */
 }

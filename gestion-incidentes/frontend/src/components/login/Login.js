@@ -20,7 +20,8 @@ const Login = ({ onLoginSuccess, onNavigateToRegistro }) => {
         try {
             const response = await axios.post(API_URL, {
                 nombre_usuario,
-                contrasena
+                contrasena,
+                
             });
 
             if (response.status === 200 && response.data.usuario) {
@@ -62,7 +63,7 @@ const Login = ({ onLoginSuccess, onNavigateToRegistro }) => {
                         required 
                     />
                 </div>
-                <button type="submit" className="login-button">Acceder</button>
+                <button type="submit" className="submit-button">Acceder</button>
                 <div className="registro-link">
                     <p>¿No tienes una cuenta? <button type="button" onClick={onNavigateToRegistro}>Regístrate</button></p>
                 </div>
