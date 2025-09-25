@@ -1,85 +1,170 @@
-.deteccion-container {
-    max-width: 600px;
-    margin: 40px auto;
-    padding: 20px;
-    background: #2b2e38; /* Fondo similar al de tu imagen */
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    color: #f0f0f0;
-}
-
-.deteccion-container h2 {
-    text-align: center;
-    color: #ffffff;
-    margin-bottom: 25px;
-}
-
-.deteccion-form .form-group {
-    margin-bottom: 15px;
-}
-
-.deteccion-form label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-}
-
-.deteccion-form input[type="text"],
-.deteccion-form select,
-.deteccion-form textarea {
+/* --- Contenedor Principal del Formulario (MODIFICADO) --- */
+/*
+  El contenedor ahora está adaptado para modales o drawers:
+  - Ancho máximo reducido para evitar desbordamiento.
+  - Altura controlada y scroll vertical para contenido largo.
+  - La rejilla de campos ahora es responsiva.
+*/
+.incident-form-container {
+    padding: 2rem;
     width: 100%;
-    padding: 10px;
-    border: 1px solid #444;
-    border-radius: 4px;
-    background: #3a3d46;
-    color: #ffffff;
-    box-sizing: border-box; /* Asegura que padding no aumente el tamaño total */
+    max-width: 750px; /* Reducido desde 900px */
+    margin: auto; /* Centra el formulario dentro del contenedor modal */
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    height: 90vh; /* Altura máxima del 90% de la ventana */
+    overflow-y: auto; /* ¡CLAVE! Habilita el scroll si el contenido es más alto */
+    box-sizing: border-box;
 }
 
-.deteccion-form textarea {
+.incident-form .form-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+    text-align: center;
+    color: #343a40;
+}
+
+/* --- Rejilla del Formulario (Mejora Responsiva) --- */
+.form-grid {
+    display: grid;
+    /* Original: grid-template-columns: repeat(2, 1fr); */
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Responsivo */
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1; /* Ocupa todo el ancho */
+}
+
+.form-group label {
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #495057;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.form-group textarea {
+    min-height: 100px;
     resize: vertical;
 }
 
-.deteccion-form input:focus,
-.deteccion-form select:focus,
-.deteccion-form textarea:focus {
-    border-color: #5aa6e8;
-    outline: none;
+/* --- Sección de Análisis de IOC --- */
+.ioc-analysis-section .ioc-input-group {
+    display: flex;
+    gap: 1rem;
+    align-items: center; /* Alinea verticalmente el input y el botón */
 }
 
-.submit-btn {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    background-color: #5aa6e8; /* Botón azul */
+.ioc-input-group input {
+    flex-grow: 1;
+}
+
+.analyze-button {
+    padding: 0.75rem 1.5rem;
+    background-color: #007bff;
     color: white;
     border: none;
     border-radius: 4px;
-    font-size: 16px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-    margin-top: 20px;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: background-color 0.2s;
 }
 
-.submit-btn:hover {
-    background-color: #438ac9;
+.analyze-button:hover {
+    background-color: #0056b3;
 }
 
-/* Estilos para mensajes de estado */
-.message {
-    padding: 10px;
-    margin-bottom: 15px;
+.analyze-button:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+}
+
+/* --- Acciones y Mensajes --- */
+.form-actions {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+.submit-button, .cancel-button {
+    padding: 0.8rem 1.6rem;
+    border: none;
     border-radius: 4px;
-    font-weight: bold;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.submit-button {
+    background-color: #28a745;
+    color: white;
+}
+.submit-button:hover { background-color: #218838; }
+
+.cancel-button {
+    background-color: #f1f3f5;
+    color: #495057;
+    border: 1px solid #ced4da;
+}
+.cancel-button:hover { background-color: #e9ecef; }
+
+.form-message {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    border-radius: 4px;
     text-align: center;
 }
+.form-message.success { background-color: #d4edda; color: #155724; }
+.form-message.error { background-color: #f8d7da; color: #721c24; }
 
-.message.success {
-    background-color: #4CAF50; /* Verde */
-    color: white;
+/* --- Resultados del Análisis --- */
+.analysis-results {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    border: 1px solid #e9ecef;
 }
 
-.message.error {
-    background-color: #f44336; /* Rojo */
-    color: white;
+.analysis-results h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: #343a40;
+}
+
+.analysis-results pre {
+    background-color: #e9ecef;
+    color: #495057;
+    padding: 1rem;
+    border-radius: 4px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
 }

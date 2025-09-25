@@ -1,22 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import DeteccionForm from '../DeteccionForm/DeteccionForm';
 import './DeteccionesView.css';
 
 const DeteccionesView = () => {
+    // --- ESTADO ---
     const [detecciones, setDetecciones] = useState([]);
     const [isFormVisible, setIsFormVisible] = useState(false);
     const [currentDeteccion, setCurrentDeteccion] = useState(null);
+    
+    // Estado para los filtros de fecha
+    const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
+    const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
     const API_URL = 'http://localhost/proyecto/sistema-gestion/gestion-incidentes/backend/';
 
-    useEffect(() => {
-        fetchDetecciones();
-    }, []);
-
-    const fetchDetecciones = async () => {
+    // --- OBTENCIÓN DE DATOS ---
+    const fetchDetecciones = useCallback(async () => {
         try {
-            const response = await axios.get(`${API_URL}obtener_incidentes.php`);
+            // Añadir mes y año como parámetros en la URL
+            const response = await axios.get(`${API_URL}obtener_detecciones.php?month=${selectedMonth}&year=${selectedYear}`);
             if (response.data.registros) {
                 setDetecciones(response.data.registros);
             } else {
@@ -26,8 +29,13 @@ const DeteccionesView = () => {
             console.error("Error al obtener las detecciones:", error);
             setDetecciones([]);
         }
-    };
+    }, [selectedMonth, selectedYear]); // Dependencias para re-ejecutar
 
+    useEffect(() => {
+        fetchDetecciones();
+    }, [fetchDetecciones]);
+
+    // --- MANEJO DE ACCIONES ---
     const handleAddClick = () => {
         setCurrentDeteccion(null);
         setIsFormVisible(true);
@@ -43,9 +51,9 @@ const DeteccionesView = () => {
             try {
                 const response = await axios.post(`${API_URL}eliminar_deteccion.php`, { id: id });
                 if (response.data.success) {
-                    fetchDetecciones();
+                    fetchDetecciones(); // Recargar datos después de eliminar
                 } else {
-                    alert('Error al eliminar la detección.');
+                    alert('Error al eliminar la detección: ' + response.data.message);
                 }
             } catch (error) {
                 console.error("Error al eliminar:", error);
@@ -56,9 +64,10 @@ const DeteccionesView = () => {
 
     const handleFormSuccess = () => {
         setIsFormVisible(false);
-        fetchDetecciones();
+        fetchDetecciones(); // Recargar datos tras éxito en el formulario
     };
 
+    // --- RENDERIZADO ---
     const getStatusClass = (estado) => {
         switch (estado) {
             case 'Abierta': return 'status-abierta';
@@ -67,6 +76,9 @@ const DeteccionesView = () => {
             default: return '';
         }
     };
+    
+    const years = Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i);
+    const months = Array.from({ length: 12 }, (_, i) => ({ value: i + 1, name: new Date(0, i).toLocaleString('default', { month: 'long' }) }));
 
     return (
         <div className="detecciones-view-container">
@@ -81,7 +93,17 @@ const DeteccionesView = () => {
 
             <div className="detecciones-header">
                 <h1>Gestión de Detecciones</h1>
-                <button className="add-button" onClick={handleAddClick}>Ingresar Nueva Detección</button>
+                <div className="header-controls">
+                    <div className="filter-controls">
+                        <select value={selectedMonth} onChange={e => setSelectedMonth(Number(e.target.value))}>
+                            {months.map(m => <option key={m.value} value={m.value}>{m.name}</option>)}
+                        </select>
+                        <select value={selectedYear} onChange={e => setSelectedYear(Number(e.target.value))}>
+                            {years.map(y => <option key={y} value={y}>{y}</option>)}
+                        </select>
+                    </div>
+                    <button className="add-button" onClick={handleAddClick}>Ingresar Nueva Detección</button>
+                </div>
             </div>
 
             <table className="detecciones-table">
@@ -120,7 +142,7 @@ const DeteccionesView = () => {
                         ))
                     ) : (
                         <tr>
-                            <td colSpan="9">No se encontraron detecciones.</td>
+                            <td colSpan="9">No se encontraron detecciones para el período seleccionado.</td>
                         </tr>
                     )}
                 </tbody>

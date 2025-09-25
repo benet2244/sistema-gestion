@@ -1,18 +1,20 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import axios from 'axios';
 import './AmenazasView.css';
 
 const AmenazasView = () => {
+    // --- ESTADO ---
     const [amenazas, setAmenazas] = useState([]);
-    const [month, setMonth] = useState(new Date().getMonth() + 1);
-    const [year, setYear] = useState(new Date().getFullYear());
+    const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
+    const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
     
     const API_URL = 'http://localhost/proyecto/sistema-gestion/gestion-incidentes/backend/';
 
-    const fetchAmenazas = async () => {
+    // --- OBTENCIÓN DE DATOS ---
+    const fetchAmenazas = useCallback(async () => {
         try {
             const response = await axios.get(`${API_URL}obtener_amenazas.php`, {
-                params: { month, year }
+                params: { month: selectedMonth, year: selectedYear }
             });
             const numericData = response.data.registros.map(row => ({
                 ...row,
@@ -28,12 +30,13 @@ const AmenazasView = () => {
             console.error("Error al obtener las amenazas:", error);
             setAmenazas([]);
         }
-    };
+    }, [selectedMonth, selectedYear]); // Dependencias para re-ejecutar la petición
 
     useEffect(() => {
         fetchAmenazas();
-    }, [month, year]);
+    }, [fetchAmenazas]);
 
+    // --- MANEJO DE ENTRADAS ---
     const handleInputChange = (date, field, value) => {
         const updatedAmenazas = amenazas.map(a => {
             if (a.fecha === date) {
@@ -51,15 +54,14 @@ const AmenazasView = () => {
 
         try {
             await axios.post(`${API_URL}guardar_amenazas.php`, amenaza);
-            // Opcional: mostrar una notificación de éxito
         } catch (error) {
             console.error("Error al guardar los datos:", error);
-            // Opcional: mostrar una notificación de error
         }
     };
 
+    // --- CÁLCULOS ---
     const columnTotals = useMemo(() => {
-        const totals = { malware: 0, phishing: 0, comando_y_control: 0, criptomineria: 0, denegacion_de_servicios: 0, intentos_conexion_bloqueados: 0, totalGeneral: 0 };
+        const totals = { malware: 0, phishing: 0, comando_y_control: 0, criptomineria: 0, denegacion_de_servicios: 0, intentos_conexion_bloqueados: 0 };
         amenazas.forEach(a => {
             totals.malware += a.malware;
             totals.phishing += a.phishing;
@@ -68,39 +70,56 @@ const AmenazasView = () => {
             totals.denegacion_de_servicios += a.denegacion_de_servicios;
             totals.intentos_conexion_bloqueados += a.intentos_conexion_bloqueados;
         });
-        totals.totalGeneral = Object.values(totals).reduce((sum, val) => sum + val, 0) - totals.totalGeneral; // self-correction
         return totals;
     }, [amenazas]);
+    
+    const totalGeneral = useMemo(() => Object.values(columnTotals).reduce((sum, val) => sum + val, 0), [columnTotals]);
 
     const getRowTotal = (amenaza) => {
-        return Object.values(amenaza).reduce((sum, val) => typeof val === 'number' ? sum + val : sum, 0);
+        return Object.keys(columnTotals).reduce((sum, key) => sum + (amenaza[key] || 0), 0);
     };
     
+    // --- RENDERIZADO ---
     const columns = [
         { key: 'malware', label: 'MALWARE' },
         { key: 'phishing', label: 'PHISHING' },
         { key: 'comando_y_control', label: 'COMANDO Y CONTROL' },
         { key: 'criptomineria', label: 'CRIPTOMINERIA' },
-        { key: 'denegacion_de_servicios', label: 'DENEGACION DE SERVICIOS' },
-        { key: 'intentos_conexion_bloqueados', label: 'INTENTOS DE CONEXIÓN BLOQUEADOS' }
+        { key: 'denegacion_de_servicios', label: 'DENEGACIÓN DE SERVICIOS' },
+        { key: 'intentos_conexion_bloqueados', label: 'CONEXIONES BLOQUEADAS' }
     ];
+
+    const years = Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i);
+    const months = Array.from({ length: 12 }, (_, i) => ({ value: i + 1, name: new Date(0, i).toLocaleString('es-ES', { month: 'long' }) }));
+    const monthName = months.find(m => m.value === selectedMonth)?.name || '';
 
     return (
         <div className="amenazas-container">
-            <h1>Registro Diario de Amenazas</h1>
+            <div className="amenazas-header">
+                <h1>Registro Diario de Amenazas</h1>
+                <div className="filter-controls">
+                    <select value={selectedMonth} onChange={e => setSelectedMonth(Number(e.target.value))}>
+                        {months.map(m => <option key={m.value} value={m.value}>{m.name}</option>)}
+                    </select>
+                    <select value={selectedYear} onChange={e => setSelectedYear(Number(e.target.value))}>
+                        {years.map(y => <option key={y} value={y}>{y}</option>)}
+                    </select>
+                </div>
+            </div>
+
             <div className="table-wrapper">
                 <table className="amenazas-table">
                     <thead>
                         <tr>
                             <th>Fecha</th>
                             {columns.map(col => <th key={col.key}>{col.label}</th>)}
-                            <th>TOTAL</th>
+                            <th>TOTAL DÍA</th>
                         </tr>
                     </thead>
                     <tbody>
                         {amenazas.map((a) => (
                             <tr key={a.fecha}>
-                                <td>{new Date(a.fecha + 'T00:00:00').toLocaleDateString()}</td>
+                                <td>{new Date(a.fecha + 'T00:00:00').toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })}</td>
                                 {columns.map(col => (
                                      <td key={col.key}>
                                          <input
@@ -118,9 +137,9 @@ const AmenazasView = () => {
                     </tbody>
                     <tfoot>
                         <tr>
-                            <th>TOTAL</th>
+                            <th>TOTAL MES</th>
                             {columns.map(col => <th key={col.key}>{columnTotals[col.key].toLocaleString()}</th>)}
-                            <th>{columnTotals.totalGeneral.toLocaleString()}</th>
+                            <th>{totalGeneral.toLocaleString()}</th>
                         </tr>
                     </tfoot>
                 </table>
