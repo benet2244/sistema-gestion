@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import Login from './components/login/Login';
-import Registro from './components/Registro/Registro'; // 1. Importar Registro
+import Registro from './components/Registro/Registro';
 import Navbar from './components/Navbar/Navbar';
 import DeteccionesView from './components/DeteccionesView/DeteccionesView';
 import Dashboard from './components/Dashboard/Dashboard';
 import AmenazasView from './components/AmenazasView/AmenazasView';
+import Bitacora from './components/Bitacora/Bitacora'; // Importar Bitacora
 import './App.css';
 
 function App() {
@@ -26,9 +27,7 @@ function App() {
     };
 
     const renderPage = () => {
-        // Si el usuario no está autenticado
         if (!user) {
-            // 2. Decidir qué componente mostrar: Login o Registro
             switch (currentPage) {
                 case 'login':
                     return <Login 
@@ -38,14 +37,12 @@ function App() {
                 case 'registro':
                     return <Registro 
                                 onNavigateToLogin={() => navigateTo('login')}
-                                // Opcional: navegar a login tras registro exitoso
                                 onRegistroSuccess={() => {
                                     alert('¡Registro exitoso! Ahora puedes iniciar sesión.');
                                     navigateTo('login');
                                 }}
                             />;
                 default:
-                    // Por si acaso, volver a login si el estado es inválido
                     setCurrentPage('login');
                     return <Login 
                                 onLoginSuccess={handleLoginSuccess} 
@@ -54,7 +51,6 @@ function App() {
             }
         }
 
-        // Si el usuario está autenticado, mostrar el contenido principal
         return (
             <div className="app-container">
                 <Navbar onNavigate={navigateTo} user={user} onLogout={handleLogout} />
@@ -62,6 +58,7 @@ function App() {
                     {currentPage === 'dashboard' && <Dashboard />}
                     {currentPage === 'detecciones' && <DeteccionesView />}
                     {currentPage === 'amenazas' && <AmenazasView />}
+                    {currentPage === 'bitacora' && <Bitacora />} {/* Añadir Bitacora */}
                 </main>
             </div>
         );

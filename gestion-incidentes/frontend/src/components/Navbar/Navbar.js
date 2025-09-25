@@ -41,7 +41,16 @@ const Navbar = ({ onNavigate, user, onLogout }) => {
                         >
                             Amenazas
                         </button>
-                    </li> {/* Nuevo enlace */}
+                    </li>
+                    <li>
+                        <button
+                            type="button"
+                            className="navbar-link-btn"
+                            onClick={() => onNavigate('bitacora')}
+                        >
+                            Bitácora
+                        </button>
+                    </li>
                 </ul>
             </div>
 
