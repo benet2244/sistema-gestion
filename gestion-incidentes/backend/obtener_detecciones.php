@@ -1,6 +1,6 @@
 <?php
 // backend/obtener_detecciones.php
-header("Access-Control-Allow-Origin: http://localhost:3001");
+header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
 require 'database.php';
