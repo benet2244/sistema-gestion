@@ -18,7 +18,6 @@ if ($db === null) {
 }
 
 // --- CONFIGURACIÓN DE FECHA ---
-// Si no se especifica mes/año, se usa el mes y año actual.
 $month = isset($_GET['month']) ? (int)$_GET['month'] : date('m');
 $year = isset($_GET['year']) ? (int)$_GET['year'] : date('Y');
 
@@ -59,16 +58,15 @@ for ($d = 1; $d <= $dias_en_mes; $d++) {
 $response_data['registros'] = $registros;
 
 
-// --- CONSULTA 2: RESUMEN DE TOTALES PARA EL GRÁFICO DE BARRAS ---
-// Suma de cada tipo de amenaza para el mes y año seleccionados.
+// --- CONSULTA 2: RESUMEN DE TOTALES PARA GRÁFICOS ---
 $query_totales = "
     SELECT
         SUM(malware) as Malware,
         SUM(phishing) as Phishing,
         SUM(comando_y_control) as 'Comando y Control',
-        SUM(criptomineria) as Criptominería,
-        SUM(denegacion_de_servicios) as 'Denegación de Servicios',
-        SUM(intentos_conexion_bloqueados) as 'Conexiones Bloqueadas'
+        SUM(criptomineria) as Criptomineria,
+        SUM(denegacion_de_servicios) as 'Denegacion de Servicios',
+        SUM(intentos_conexion_bloqueados) as 'Intentos de Conexión Bloqueados'
     FROM amenazas_diarias
     WHERE MONTH(fecha) = ? AND YEAR(fecha) = ?;
 ";
@@ -79,7 +77,7 @@ $result_totales = $stmt_totales->get_result();
 $totales = $result_totales->fetch_assoc();
 $stmt_totales->close();
 
-// Formateo para el gráfico de barras (Chart.js)
+// Formato para el gráfico de barras horizontal (Amenazas por Tipo)
 $threatsBySubclass = [];
 if ($totales) {
     foreach ($totales as $name => $value) {
@@ -88,9 +86,19 @@ if ($totales) {
 }
 $response_data['threatsBySubclass'] = $threatsBySubclass;
 
+// NUEVO: Formato para el gráfico de barras vertical (Acumulado Mensual)
+$monthlyAccumulated = [
+    'labels' => [],
+    'data' => []
+];
+if ($totales) {
+    $monthlyAccumulated['labels'] = array_keys($totales);
+    $monthlyAccumulated['data'] = array_map('intval', array_values($totales));
+}
+$response_data['monthlyAccumulated'] = $monthlyAccumulated;
+
 
 // --- CONSULTA 3: EVOLUCIÓN MENSUAL PARA EL GRÁFICO DE LÍNEAS ---
-// Total de amenazas por mes, para mostrar la tendencia.
 $query_tendencia = "
     SELECT 
         YEAR(fecha) AS anio,

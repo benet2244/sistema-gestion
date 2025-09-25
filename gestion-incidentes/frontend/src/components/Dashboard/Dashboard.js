@@ -2,14 +2,14 @@ import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import {
     Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale,
-    LinearScale, BarElement, PointElement, LineElement,
+    LinearScale, BarElement, PointElement, LineElement, Title
 } from 'chart.js';
 import { Doughnut, Bar, Line } from 'react-chartjs-2';
 import './Dashboard.css';
 
 const API_BASE_URL = 'http://localhost/proyecto/sistema-gestion/gestion-incidentes/backend';
 
-ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, PointElement, LineElement);
+ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, PointElement, LineElement, Title);
 
 // --- COMPONENTES (sin cambios) ---
 const TodayIcon = () => <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>;
@@ -68,10 +68,10 @@ const Dashboard = () => {
     const [recentIncidents, setRecentIncidents] = useState([]);
     const [stats, setStats] = useState({ total: 0, high: 0, pending: 0, resolved: 0, today: 0 });
     
-    // CORREGIDO: Restaurado el estado para el gráfico de amenazas
     const [threatsByTypeData, setThreatsByTypeData] = useState({ labels: [], datasets: [] });
     const [detectionsByStatusData, setDetectionsByStatusData] = useState({ labels: [], datasets: [] });
     const [monthlyTrendData, setMonthlyTrendData] = useState({ labels: [], datasets: [] });
+    const [monthlyThreatsDataBar, setMonthlyThreatsDataBar] = useState({ labels: [], datasets: [] });
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -86,7 +86,6 @@ const Dashboard = () => {
                 axios.get(`${API_BASE_URL}/obtener_amenazas.php?month=${selectedMonth}&year=${selectedYear}`)
             ]);
 
-            // --- PROCESAMIENTO DE DETECCIONES (KPIs, Gráfico de Estado y Tabla) ---
             const detectionsData = detectionsRes.data || {};
             setStats(detectionsData.kpis || { total: 0, high: 0, pending: 0, resolved: 0, today: 0 });
             setRecentIncidents(detectionsData.recentIncidents || []);
@@ -102,10 +101,7 @@ const Dashboard = () => {
                 }],
             });
 
-            // --- PROCESAMIENTO DE AMENAZAS (Gráfico de Barras y Líneas) ---
             const threatsData = threatsRes.data || {};
-            
-            // CORREGIDO: Se procesan los datos para el gráfico de barras de amenazas
             const threatsBySubclass = threatsData.threatsBySubclass || [];
             setThreatsByTypeData({
                 labels: threatsBySubclass.map(t => t.name),
@@ -114,6 +110,25 @@ const Dashboard = () => {
                     data: threatsBySubclass.map(t => t.value),
                     backgroundColor: '#3B82F6',
                 }],
+            });
+
+            // --- ACTUALIZACIÓN PARA EL NUEVO GRÁFICO DINÁMICO ---
+            const monthlyAccumulated = threatsData.monthlyAccumulated || { labels: [], data: [] };
+            setMonthlyThreatsDataBar({
+                labels: monthlyAccumulated.labels,
+                datasets: [
+                  {
+                    label: 'Amenazas Mitigadas',
+                    data: monthlyAccumulated.data,
+                    backgroundColor: [
+                      '#28a745', '#ffc107', '#dc3545', '#17a2b8', '#6f42c1', '#007bff',
+                    ],
+                    borderColor: [
+                        '#28a745', '#ffc107', '#dc3545', '#17a2b8', '#6f42c1', '#007bff',
+                    ],
+                    borderWidth: 1,
+                  },
+                ],
             });
 
             const trendData = threatsData.threatsPerMonth || [];
@@ -171,7 +186,6 @@ const Dashboard = () => {
             </div>
 
             <div className="main-charts-grid">
-                 {/* CORREGIDO: El primer gráfico vuelve a ser el de Amenazas por Tipo */}
                  <ChartBox title={`Amenazas por Tipo (${monthName} ${selectedYear})`}>
                     {(threatsByTypeData.datasets[0]?.data.reduce((a, b) => a + b, 0) > 0)
                         ? <Bar data={threatsByTypeData} options={{ indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }}, scales: { x: { ticks: { stepSize: 1 }}}}} />
@@ -194,6 +208,59 @@ const Dashboard = () => {
             </div>
 
             <RecentIncidentsTable incidents={recentIncidents} />
+
+            {/* Gráfico de Amenazas Acumuladas por Mes */}
+            <div className="chart-box" style={{ marginTop: '2rem' }}>
+                 {(monthlyThreatsDataBar.datasets[0]?.data.reduce((a, b) => a + b, 0) > 0)
+                    ? <Bar
+                    data={monthlyThreatsDataBar}
+                    options={{
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                display: false,
+                            },
+                            title: {
+                                display: true,
+                                text: `ACUMULADO DEL MES DE ${monthName.toUpperCase()}`,
+                                font: {
+                                    size: 18,
+                                    weight: 'bold',
+                                },
+                                padding: {
+                                    top: 10,
+                                    bottom: 30,
+                                },
+                            },
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'AMENAZAS MITIGADAS',
+                                    font: {
+                                        weight: 'bold',
+                                    },
+                                },
+                                ticks: {
+                                    callback: function(value) {
+                                        return Number(value).toLocaleString('es-ES');
+                                    },
+                                },
+                            },
+                            x: {
+                                ticks: {
+                                    font: {
+                                        weight: 'bold',
+                                    },
+                                },
+                            },
+                        },
+                    }}
+                />
+                : <p className="chart-placeholder">No hay datos de amenazas para este mes</p>}
+            </div>
         </div>
     );
 };
