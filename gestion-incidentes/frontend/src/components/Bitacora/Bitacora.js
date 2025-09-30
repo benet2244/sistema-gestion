@@ -3,7 +3,7 @@ import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import './Bitacora.css';
 
-const API_BASE_URL = 'http://localhost/proyecto/sistema-gestion/gestion-incidentes/backend';
+const API_BASE_URL = 'http://192.168.39.75/gestion-incidentes/sistema/backend';
 
 const sections = [
   "1. Asignación del Flujo de Trabajo",

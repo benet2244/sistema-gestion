@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import './Login.css';
+import './login.css';
 
 const Login = ({ onLoginSuccess, onNavigateToRegistro }) => {
     const [nombre_usuario, setNombreUsuario] = useState('');
     const [contrasena, setContrasena] = useState('');
     const [message, setMessage] = useState({ type: '', text: '' });
 
-    const API_URL = 'http://localhost/proyecto/sistema-gestion/gestion-incidentes/backend/login.php';
+    const API_URL = 'http://192.168.39.75/gestion-incidentes/sistemas/backend/login.php';
 
     const handleSubmit = async (e) => {
         e.preventDefault();

@@ -14,7 +14,7 @@ const DeteccionesView = () => {
     const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
-    const API_URL = 'http://localhost/proyecto/sistema-gestion/gestion-incidentes/backend/';
+    const API_URL = 'http://192.168.39.75/gestion-incidentes/sistema/backend/';
 
     // --- OBTENCIÓN DE DATOS ---
     const fetchDetecciones = useCallback(async () => {

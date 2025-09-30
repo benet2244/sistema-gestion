@@ -12,7 +12,7 @@ const Registro = ({ onRegistroSuccess, onNavigateToLogin }) => {
     const [message, setMessage] = useState('');
     const [isSuccess, setIsSuccess] = useState(false);
 
-    const API_URL = 'http://localhost/proyecto/sistema-gestion/gestion-incidentes/backend/crear_usuario.php';
+    const API_URL = 'http://192.168.39.75/gestion-incidentes/sistema/backend/crear_usuario.php';
 
     const handleChange = (e) => {
         const { name, value } = e.target;

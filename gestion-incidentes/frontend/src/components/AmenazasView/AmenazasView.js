@@ -8,7 +8,7 @@ const AmenazasView = () => {
     const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
     
-    const API_URL = 'http://localhost/proyecto/sistema-gestion/gestion-incidentes/backend/';
+    const API_URL = 'https://192.168.39.75/gestion-incidentes/sistema/backend/';
 
     // --- OBTENCIÓN DE DATOS ---
     const fetchAmenazas = useCallback(async () => {
@@ -30,7 +30,7 @@ const AmenazasView = () => {
             console.error("Error al obtener las amenazas:", error);
             setAmenazas([]);
         }
-    }, [selectedMonth, selectedYear]); // Dependencias para re-ejecutar la petición
+    }, [selectedMonth, selectedYear, API_URL]); // Dependencias para re-ejecutar la petición
 
     useEffect(() => {
         fetchAmenazas();

@@ -1,6 +1,9 @@
 <?php
 // backend/obtener_amenazas.php
 
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: GET");
@@ -17,7 +20,6 @@ if ($db === null) {
     exit();
 }
 
-// --- CONFIGURACIÓN DE FECHA ---
 $month = isset($_GET['month']) ? (int)$_GET['month'] : date('m');
 $year = isset($_GET['year']) ? (int)$_GET['year'] : date('Y');
 
@@ -44,29 +46,23 @@ for ($d = 1; $d <= $dias_en_mes; $d++) {
         $registros[] = $datos_existentes[$fecha_actual];
     } else {
         $registros[] = [
-            "id" => null,
-            "fecha" => $fecha_actual,
-            "malware" => 0,
-            "phishing" => 0,
-            "comando_y_control" => 0,
-            "criptomineria" => 0,
-            "denegacion_de_servicios" => 0,
+            "id" => null, "fecha" => $fecha_actual, "malware" => 0, "phishing" => 0,
+            "comando_y_control" => 0, "criptomineria" => 0, "denegacion_de_servicios" => 0,
             "intentos_conexion_bloqueados" => 0,
         ];
     }
 }
 $response_data['registros'] = $registros;
 
-
-// --- CONSULTA 2: RESUMEN DE TOTALES PARA GRÁFICOS ---
+// --- CONSULTA 2: RESUMEN DE TOTALES PARA GRÁFICOS DE BARRAS ---
 $query_totales = "
     SELECT
         SUM(malware) as Malware,
         SUM(phishing) as Phishing,
-        SUM(comando_y_control) as 'Comando y Control',
+        SUM(comando_y_control) as Comando_y_Control,
         SUM(criptomineria) as Criptomineria,
-        SUM(denegacion_de_servicios) as 'Denegacion de Servicios',
-        SUM(intentos_conexion_bloqueados) as 'Intentos de Conexión Bloqueados'
+        SUM(denegacion_de_servicios) as Denegacion_de_Servicios,
+        SUM(intentos_conexion_bloqueados) as Intentos_de_Conexion_Bloqueados
     FROM amenazas_diarias
     WHERE MONTH(fecha) = ? AND YEAR(fecha) = ?;
 ";
@@ -77,38 +73,35 @@ $result_totales = $stmt_totales->get_result();
 $totales = $result_totales->fetch_assoc();
 $stmt_totales->close();
 
-// Formato para el gráfico de barras horizontal (Amenazas por Tipo)
+// 1. Datos para la gráfica horizontal (Amenazas por Tipo)
 $threatsBySubclass = [];
 if ($totales) {
     foreach ($totales as $name => $value) {
-        $threatsBySubclass[] = ['name' => $name, 'value' => (int)$value];
+        $threatsBySubclass[] = ['name' => str_replace('_', ' ', $name), 'value' => (int)$value];
     }
 }
 $response_data['threatsBySubclass'] = $threatsBySubclass;
 
-// NUEVO: Formato para el gráfico de barras vertical (Acumulado Mensual)
-$monthlyAccumulated = [
-    'labels' => [],
-    'data' => []
-];
+// 2. Datos para la gráfica vertical (Acumulado Mensual)
+$monthlyAccumulated = ['labels' => [], 'data' => []];
 if ($totales) {
-    $monthlyAccumulated['labels'] = array_keys($totales);
+    $monthlyAccumulated['labels'] = array_map(function($key) { return str_replace('_', ' ', $key); }, array_keys($totales));
     $monthlyAccumulated['data'] = array_map('intval', array_values($totales));
 }
 $response_data['monthlyAccumulated'] = $monthlyAccumulated;
 
-
-// --- CONSULTA 3: EVOLUCIÓN MENSUAL PARA EL GRÁFICO DE LÍNEAS ---
+// --- CONSULTA 3: EVOLUCIÓN MENSUAL (CORREGIDA PARA FILTRAR POR AÑO) ---
 $query_tendencia = "
     SELECT 
-        YEAR(fecha) AS anio,
-        MONTH(fecha) AS mes_num,
+        YEAR(fecha) AS anio, MONTH(fecha) AS mes_num,
         SUM(malware + phishing + comando_y_control + criptomineria + denegacion_de_servicios + intentos_conexion_bloqueados) AS total_amenazas
     FROM amenazas_diarias
-    GROUP BY anio, mes_num
+    WHERE YEAR(fecha) = ?
+    GROUP BY anio, mes_num 
     ORDER BY anio, mes_num;
 ";
 $stmt_tendencia = $db->prepare($query_tendencia);
+$stmt_tendencia->bind_param("i", $year);
 $stmt_tendencia->execute();
 $result_tendencia = $stmt_tendencia->get_result();
 $tendencia = [];
@@ -117,7 +110,6 @@ while ($row = $result_tendencia->fetch_assoc()) {
 }
 $response_data['threatsPerMonth'] = $tendencia;
 $stmt_tendencia->close();
-
 
 // --- RESPUESTA FINAL ---
 http_response_code(200);

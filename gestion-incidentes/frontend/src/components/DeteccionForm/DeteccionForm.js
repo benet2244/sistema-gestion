@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './DeteccionForm.css';
 
-const API_BASE_URL = 'http://localhost/proyecto/sistema-gestion/gestion-incidentes/backend';
+const API_BASE_URL = 'http://192.168.39.75/gestion-incidentes/sistema/backend';
 
 // Este componente se reconstruyó basándose en el esquema de la base de datos para asegurar una correspondencia 1:1.
 const DeteccionForm = ({ currentDeteccion, onSave, onClose }) => {
